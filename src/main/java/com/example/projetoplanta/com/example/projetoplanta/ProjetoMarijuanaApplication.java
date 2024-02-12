@@ -1,13 +1,13 @@
-package com.example.projetoplanta;
+package com.example.projetoplanta.com.example.projetoplanta;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ProjetoPlantaApplication {
+public class ProjetoMarijuanaApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ProjetoPlantaApplication.class, args);
+		SpringApplication.run(ProjetoMarijuanaApplication.class, args);
 	}
 
 }

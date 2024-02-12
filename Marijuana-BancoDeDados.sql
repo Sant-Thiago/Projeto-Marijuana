@@ -3,7 +3,7 @@ CREATE DATABASE planta_database;
 USE planta_database;
 
 CREATE TABLE usuario (
-	id VARCHAR(255) PRIMARY KEY NOT NULL,
+	  id VARCHAR(255) PRIMARY KEY NOT NULL,
     email VARCHAR(45) NOT NULL UNIQUE,
     senha VARCHAR(20) NOT NULL,
     nome VARCHAR(45) NOT NULL,
