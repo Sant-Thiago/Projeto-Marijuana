@@ -31,7 +31,8 @@ public class UsuarioModel implements Serializable {
     private String senha;
     private String nome;
     private String pais;
-    private String idade;
+    private String dtNasc;
     private String genero;
+    private String status;
     
 }

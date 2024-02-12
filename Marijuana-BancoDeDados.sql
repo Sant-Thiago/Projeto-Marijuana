@@ -12,9 +12,18 @@ CREATE TABLE usuario (
     sexo CHAR(3)
 );
 
-alter table usuario change país pais CHAR(2) NOT NULL;
-alter table usuario MODIFY sexo VARCHAR(42);
-alter table usuario CHANGE sexo genero VARCHAR(42);
+ALTER TABLE usuario CHANGE país pais CHAR(2) NOT NULL;
+ALTER TABLE usuario MODIFY sexo VARCHAR(42);
+ALTER TABLE usuario CHANGE sexo genero VARCHAR(42);
+ALTER TABLE usuario CHANGE idade dtNascimento VARCHAR(42);
+ALTER TABLE usuario MODIFY senha VARCHAR(42) NOT NULL;
+ALTER TABLE usuario DROP genero;
+ALTER TABLE usuario DROP dt_nasc;
+ALTER TABLE usuario ADD status VARCHAR(10) NOT NULL;
+ALTER TABLE usuario ADD CONSTRAINT ckStatus CHECK (status IN("ATIVO", "DESATIVADO"));
+
+DROP DATABASE planta_database;
+DESC usuario;
 
 CREATE TABLE planta (
 	id VARCHAR(420) PRiMARY KEY NOT NULL,
