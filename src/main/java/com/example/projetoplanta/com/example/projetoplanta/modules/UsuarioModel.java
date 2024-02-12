@@ -2,6 +2,8 @@ package com.example.projetoplanta.com.example.projetoplanta.modules;
 
 import java.io.Serializable;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,8 +25,8 @@ import lombok.ToString;
 
 @Entity
 @Table(name = "usuario")
-@EqualsAndHashCode(of="id")
-public class UsuarioModel implements Serializable {
+@EqualsAndHashCode(of="id", callSuper = false)
+public class UsuarioModel extends RepresentationModel<UsuarioModel> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
