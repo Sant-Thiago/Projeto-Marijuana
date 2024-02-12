@@ -14,6 +14,7 @@ CREATE TABLE usuario (
 
 alter table usuario change país pais CHAR(2) NOT NULL;
 alter table usuario MODIFY sexo VARCHAR(42);
+alter table usuario CHANGE sexo genero VARCHAR(42);
 
 CREATE TABLE planta (
 	id VARCHAR(420) PRiMARY KEY NOT NULL,
