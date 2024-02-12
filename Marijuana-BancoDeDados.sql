@@ -21,6 +21,7 @@ ALTER TABLE usuario DROP genero;
 ALTER TABLE usuario DROP dt_nasc;
 ALTER TABLE usuario ADD status VARCHAR(10) NOT NULL;
 ALTER TABLE usuario ADD CONSTRAINT ckStatus CHECK (status IN("ATIVO", "DESATIVADO"));
+ALTER TABLE usuario MODIFY pais CHAR(2) NOT NULL;
 
 DROP DATABASE planta_database;
 DESC usuario;

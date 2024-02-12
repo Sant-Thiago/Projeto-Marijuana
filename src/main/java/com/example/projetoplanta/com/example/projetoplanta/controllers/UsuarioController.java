@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,6 +30,7 @@ public class UsuarioController {
     public ResponseEntity<UsuarioModel> cadastrarUsuario(@RequestBody @Valid UsuarioRecordDTO usuario) {
         var usuarioModel = new UsuarioModel();
         BeanUtils.copyProperties(usuario, usuarioModel);
+        usuarioModel.setStatus("ATIVO");
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioRepository.save(usuarioModel));
     }
 
@@ -44,5 +46,17 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario não encontrado");
         }
         return ResponseEntity.status(HttpStatus.OK).body(usuario.get());
+    }
+
+    @PutMapping("/usuario/{id}")
+    public ResponseEntity<Object> desativarUsuario(@PathVariable(value = "id") String id) {
+        Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
+        if (usuario.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario não encontrado");
+        }
+        var usuarioModel = new UsuarioModel();
+        BeanUtils.copyProperties(usuario.get(), usuarioModel);
+        usuarioModel.setStatus("DESATIVADO");
+        return ResponseEntity.status(HttpStatus.CREATED).body("Usuario atualizado: " + usuarioRepository.save(usuarioModel));
     }
 }

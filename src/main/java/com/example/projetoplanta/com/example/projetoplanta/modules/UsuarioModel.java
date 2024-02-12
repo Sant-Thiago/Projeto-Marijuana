@@ -2,6 +2,7 @@ package com.example.projetoplanta.com.example.projetoplanta.modules;
 
 import java.io.Serializable;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,11 +13,13 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 
 @Entity
 @Table(name = "usuario")
@@ -31,7 +34,8 @@ public class UsuarioModel implements Serializable {
     private String senha;
     private String nome;
     private String pais;
-    private String dtNasc;
+    @Column(name = "dtNascimento")
+    private String dtNascimento;
     private String genero;
     private String status;
     
