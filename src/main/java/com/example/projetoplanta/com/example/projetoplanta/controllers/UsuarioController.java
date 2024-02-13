@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.projetoplanta.com.example.projetoplanta.DTO.UsuarioRecordDTO;
@@ -25,12 +26,13 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
+@RequestMapping("/usuario")
 public class UsuarioController {
 
     @Autowired
     UsuarioRepository usuarioRepository;
 
-    @PostMapping("/usuario")
+    @PostMapping("/cadastrar")
     public ResponseEntity<UsuarioModel> cadastrarUsuario(@RequestBody @Valid UsuarioRecordDTO usuario) {
         var usuarioModel = new UsuarioModel();
         BeanUtils.copyProperties(usuario, usuarioModel);
@@ -53,11 +55,11 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(listaTodosUsuarios);
     }
 
-    @GetMapping("/usuario/{id}")
+    @GetMapping("/listar/{id}")
     public ResponseEntity<Object> listarUsuario(@PathVariable(value = "id") String id) {
         Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
         if (usuario.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario não encontrado.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado.");
         }
         usuario.get().add(linkTo(methodOn(UsuarioController.class).listarTodosUsuarios()).withSelfRel());
         usuario.get().add(linkTo(methodOn(UsuarioController.class, ativarUsuario(id))).withSelfRel());
@@ -66,38 +68,37 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(usuario.get());
     }
 
-    @PutMapping("/usuario/{id}")
+    @PutMapping("/ativar/{id}")
     public ResponseEntity<Object> ativarUsuario(@PathVariable(value = "id") String id) {
         Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
         if (usuario.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario não encontrado.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado.");
         }
         var usuarioModel = new UsuarioModel();
         BeanUtils.copyProperties(usuario.get(), usuarioModel);
         usuarioModel.setStatus("ATIVADO");
-        return ResponseEntity.status(HttpStatus.OK).body("Usuario atualizado: " + usuarioRepository.save(usuarioModel));
+        return ResponseEntity.status(HttpStatus.OK).body("Usuário atualizado: " + usuarioRepository.save(usuarioModel));
     }
 
-    @PutMapping("/usuario/{id}")
+    @PutMapping("/desativar/{id}")
     public ResponseEntity<Object> desativarUsuario(@PathVariable(value = "id") String id) {
         Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
         if (usuario.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario não encontrado.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado.");
         }
         var usuarioModel = new UsuarioModel();
         BeanUtils.copyProperties(usuario.get(), usuarioModel);
         usuarioModel.setStatus("DESATIVADO");
-        return ResponseEntity.status(HttpStatus.OK).body("Usuario atualizado: " + usuarioRepository.save(usuarioModel));
+        return ResponseEntity.status(HttpStatus.OK).body("Usuário atualizado: " + usuarioRepository.save(usuarioModel));
     }
 
-    @DeleteMapping("/usuario/{id}")
+    @DeleteMapping("/deletar/{id}")
     public ResponseEntity<Object> deletarUsuario(@PathVariable(value = "id") String id) {
         Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
         if (usuario.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario não encontrado.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado.");
         }
         usuarioRepository.delete(usuario.get());
-        return ResponseEntity.status(HttpStatus.OK).body("Usuario deletado com sucesso.");
-        
+        return ResponseEntity.status(HttpStatus.OK).body("Usuário deletado com sucesso.")
     }
 }
