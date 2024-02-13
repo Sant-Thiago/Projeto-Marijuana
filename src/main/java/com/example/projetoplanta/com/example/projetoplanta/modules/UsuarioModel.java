@@ -27,7 +27,7 @@ import lombok.ToString;
 @Table(name = "usuario")
 @EqualsAndHashCode(of="id", callSuper = false)
 public class UsuarioModel extends RepresentationModel<UsuarioModel> implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     @Id
     @GeneratedValue(strategy=GenerationType.UUID)
@@ -36,7 +36,6 @@ public class UsuarioModel extends RepresentationModel<UsuarioModel> implements S
     private String senha;
     private String nome;
     private String pais;
-    @Column(name = "dtNascimento")
     private String dtNascimento;
     private String genero;
     private String status;
