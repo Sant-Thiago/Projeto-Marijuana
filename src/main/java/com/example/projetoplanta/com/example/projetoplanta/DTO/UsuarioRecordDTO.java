@@ -10,7 +10,7 @@ public record UsuarioRecordDTO(
     String senha, 
     @NotBlank   
     String nome, 
-    @NotBlank   
+    Byte[] foto,
     String pais, 
     String dtNascimento, 
     String genero, 

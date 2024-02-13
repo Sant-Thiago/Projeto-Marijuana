@@ -15,6 +15,8 @@ CREATE TABLE usuario (
 		CONSTRAINT ckStatus CHECK (status IN("ATIVO", "DESATIVADO"))
 );
 
+ALTER TABLE usuario MODIFY pais CHAR(2);
+
 DROP DATABASE planta_database;
 DESC usuario;
 

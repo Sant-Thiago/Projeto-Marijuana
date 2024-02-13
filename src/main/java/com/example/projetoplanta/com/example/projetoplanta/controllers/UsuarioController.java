@@ -1,5 +1,6 @@
 package com.example.projetoplanta.com.example.projetoplanta.controllers;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.projetoplanta.com.example.projetoplanta.DTO.UsuarioRecordDTO;
 import com.example.projetoplanta.com.example.projetoplanta.modules.UsuarioModel;
@@ -89,6 +92,22 @@ public class UsuarioController {
         var usuarioModel = new UsuarioModel();
         BeanUtils.copyProperties(usuario.get(), usuarioModel);
         usuarioModel.setStatus("DESATIVADO");
+        return ResponseEntity.status(HttpStatus.OK).body("Usuário atualizado: " + usuarioRepository.save(usuarioModel));
+    }
+
+    @PutMapping("/imagem/{id}")
+    public ResponseEntity<Object> alterarFoto(@PathVariable(value = "id") String id, @RequestParam("foto") MultipartFile foto) {
+        Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
+        if (usuario.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado.");
+        }
+        var usuarioModel = new UsuarioModel();
+        try {
+            BeanUtils.copyProperties(usuario.get(), usuarioModel);
+            usuarioModel.setFoto(foto.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return ResponseEntity.status(HttpStatus.OK).body("Usuário atualizado: " + usuarioRepository.save(usuarioModel));
     }
 
