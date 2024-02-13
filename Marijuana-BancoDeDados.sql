@@ -3,25 +3,17 @@ CREATE DATABASE planta_database;
 USE planta_database;
 
 CREATE TABLE usuario (
-	  id VARCHAR(255) PRIMARY KEY NOT NULL,
+	id VARCHAR(255) PRIMARY KEY NOT NULL,
     email VARCHAR(45) NOT NULL UNIQUE,
-    senha VARCHAR(20) NOT NULL,
+    senha VARCHAR(42) NOT NULL,
     nome VARCHAR(45) NOT NULL,
+    foto BLOB,
     pais CHAR(2) NOT NULL,
-    idade VARCHAR(45),
-    sexo CHAR(3)
+    dtNascimento VARCHAR(42),
+    genero VARCHAR(42),
+    status VARCHAR(10) NOT NULL,
+		CONSTRAINT ckStatus CHECK (status IN("ATIVO", "DESATIVADO"))
 );
-
-ALTER TABLE usuario CHANGE país pais CHAR(2) NOT NULL;
-ALTER TABLE usuario MODIFY sexo VARCHAR(42);
-ALTER TABLE usuario CHANGE sexo genero VARCHAR(42);
-ALTER TABLE usuario CHANGE idade dtNascimento VARCHAR(42);
-ALTER TABLE usuario MODIFY senha VARCHAR(42) NOT NULL;
-ALTER TABLE usuario DROP genero;
-ALTER TABLE usuario DROP dt_nasc;
-ALTER TABLE usuario ADD status VARCHAR(10) NOT NULL;
-ALTER TABLE usuario ADD CONSTRAINT ckStatus CHECK (status IN("ATIVO", "DESATIVADO"));
-ALTER TABLE usuario MODIFY pais CHAR(2) NOT NULL;
 
 DROP DATABASE planta_database;
 DESC usuario;
@@ -35,17 +27,67 @@ CREATE TABLE planta (
 		CONSTRAINT ckGeneticaP CHECK (genetica IN ("Sativa", "Indica", "Ruderalis", "Híbrido")),
     porcentagemTHC VARCHAR(4) NOT NULL,
     porcetagemCDB VARCHAR(4) NOT NULL,
-    cor VARCHAR(42) NOT NULL,
-    aroma VARCHAR(42),
-    terpenoDominante VARCHAR(100),
-    terpenosSecundarios VARCHAR(100),
-    beneficios VARCHAR(420) NOT NULL,
-    maleficios VARCHAR(210) NOT NULL,
-    ajudaMedica VARCHAR(420) NOT NULL,
     paisOrigem VARCHAR(420) NOT NULL,
     alturaEmCM VARCHAR(5) NOT NULL,
     gramaPorMetroQuadrado VARCHAR(8) NOT NULL,
     tempoFloracao VARCHAR(10) NOT NULL
+);
+
+CREATE TABLE duende (
+	fkUsuario VARCHAR(255) PRIMARY KEY,
+		CONSTRAINT fkUsuarioD FOREIGN KEY (fkUsuario) REFERENCES usuario(id),
+    numeroNascionalId VARCHAR(20) NOT NULL,
+    dtIntegracao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE solicitacao (
+	id INT PRIMARY KEY NOT NULL,
+    solicitante VARCHAR(255) NOT NULL,
+		CONSTRAINT fkSolicitanteSol FOREIGN KEY (solicitante) REFERENCES usuario(id),
+    fotoUsuario BLOB,
+    dtArmazenamento TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(12) NOT NULL,
+		CONSTRAINT ckStatusSol CHECK (status IN ("PENDENTE", "NÃO PENDENTE"))
+);
+
+CREATE TABLE aroma (
+    fkPlanta VARCHAR(420),
+		CONSTRAINT fkPlantaA FOREIGN KEY (fkPlanta) REFERENCES planta(id),
+    nome VARCHAR(42),
+    PRIMARY KEY(fkPlanta, nome),
+    caracterista VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE terpeno (
+    fkPlanta VARCHAR(420),
+		CONSTRAINT fkPlantaT FOREIGN KEY (fkPlanta) REFERENCES planta(id),
+    nome VARCHAR(255),
+    PRIMARY KEY(fkPlanta, nome),
+    caracterista VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE beneficio (
+    fkPlanta VARCHAR(420),
+		CONSTRAINT fkPlantaBen FOREIGN KEY (fkPlanta) REFERENCES planta(id),
+    nome VARCHAR(255),
+    PRIMARY KEY(fkPlanta, nome),
+    motivo VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE maleficio (
+    fkPlanta VARCHAR(420),
+		CONSTRAINT fkPlantaMal FOREIGN KEY (fkPlanta) REFERENCES planta(id),
+    nome VARCHAR(255),
+    PRIMARY KEY(fkPlanta, nome),
+    motivo VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE imagemPlanta (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    fkPlanta VARCHAR(420) NOT NULL,
+		CONSTRAINT fkPlantaIP FOREIGN KEY (fkPlanta) REFERENCES planta(id),
+    imagem BLOB NOT NULL,
+    dtArmazenamento TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE relacaoUsuarioPlanta (

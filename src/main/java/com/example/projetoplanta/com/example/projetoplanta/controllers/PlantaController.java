@@ -44,8 +44,8 @@ public class PlantaController {
         if (!listaTodasPlantas.isEmpty()) {
             for (PlantaModel planta : listaTodasPlantas) {
                 String id = planta.getId();
-                planta.add(linkTo(methodOn(PlantaController.class).listarPlanta(id)).withSelfRel());
-                planta.add(linkTo(methodOn(PlantaController.class, atualizarPlanta(id, null))).withSelfRel());
+                planta.add(linkTo(methodOn(PlantaController.class).listarPlanta(id)).withRel("listar"));
+                planta.add(linkTo(methodOn(PlantaController.class).atualizarPlanta(id, null)).withRel("atualizar"));
 
             }
         }
@@ -58,8 +58,8 @@ public class PlantaController {
         if (planta.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Planta não encontrada.");
         }
-        planta.get().add(linkTo(methodOn(PlantaController.class).listarTodasPlantas()).withSelfRel());
-        planta.get().add(linkTo(methodOn(PlantaController.class, atualizarPlanta(id, null))).withSelfRel());
+        planta.get().add(linkTo(methodOn(PlantaController.class).listarTodasPlantas()).withRel("listarTodas"));
+        planta.get().add(linkTo(methodOn(PlantaController.class).atualizarPlanta(id, null)).withRel("atualizar"));
         return ResponseEntity.status(HttpStatus.OK).body(planta.get());
     }
 
