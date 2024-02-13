@@ -8,14 +8,12 @@ CREATE TABLE usuario (
     senha VARCHAR(42) NOT NULL,
     nome VARCHAR(45) NOT NULL,
     foto BLOB,
-    pais CHAR(2) NOT NULL,
+    pais CHAR(2),
     dtNascimento VARCHAR(42),
     genero VARCHAR(42),
     status VARCHAR(10) NOT NULL,
 		CONSTRAINT ckStatus CHECK (status IN("ATIVO", "DESATIVADO"))
 );
-
-ALTER TABLE usuario MODIFY pais CHAR(2);
 
 DROP DATABASE planta_database;
 DESC usuario;
@@ -28,9 +26,9 @@ CREATE TABLE planta (
     genetica VARCHAR(9) NOT NULL,
 		CONSTRAINT ckGeneticaP CHECK (genetica IN ("Sativa", "Indica", "Ruderalis", "Híbrido")),
     porcentagemTHC VARCHAR(4) NOT NULL,
-    porcetagemCDB VARCHAR(4) NOT NULL,
+    porcentagemCDB VARCHAR(4) NOT NULL,
     paisOrigem VARCHAR(420) NOT NULL,
-    alturaEmCM VARCHAR(5) NOT NULL,
+    alturaEmCM VARCHAR(11) NOT NULL,
     gramaPorMetroQuadrado VARCHAR(8) NOT NULL,
     tempoFloracao VARCHAR(10) NOT NULL
 );

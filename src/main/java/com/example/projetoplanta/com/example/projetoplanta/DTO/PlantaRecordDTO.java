@@ -14,17 +14,6 @@ public record PlantaRecordDTO(
     @NotBlank   
     String porcentagemCDB, 
     @NotBlank   
-    String cor, 
-    String aroma, 
-    String terpenoDominante, 
-    String terpenosSecundarios, 
-    @NotBlank   
-    String beneficios, 
-    @NotBlank   
-    String maleficios, 
-    @NotBlank   
-    String ajudaMedica, 
-    @NotBlank   
     String paisOrigem, 
     @NotBlank   
     String alturaEmCM, 

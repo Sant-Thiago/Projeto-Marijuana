@@ -73,6 +73,8 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(usuario.get());
     }
 
+    
+
     @PutMapping("/ativar/{id}")
     public ResponseEntity<Object> ativarUsuario(@PathVariable(value = "id") String id) {
         Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
@@ -110,7 +112,7 @@ public class UsuarioController {
                 return ResponseEntity.status(HttpStatus.OK).body("Imagem foi anulada" + usuarioRepository.save(usuarioModel));
             }
             usuarioModel.setFoto(foto.getBytes());
-            // pendencias
+            // PENDENCIAS
             return ResponseEntity.status(HttpStatus.OK).body("Usuário atualizado: " + usuarioRepository.save(usuarioModel));
         } catch (IOException e) {
             e.printStackTrace();

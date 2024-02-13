@@ -26,7 +26,7 @@ import lombok.ToString;
 @Table(name = "planta")
 @EqualsAndHashCode(of="id", callSuper = false)
 public class PlantaModel extends RepresentationModel<PlantaModel> implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     @Id
     @GeneratedValue(strategy=GenerationType.UUID)
@@ -37,13 +37,6 @@ public class PlantaModel extends RepresentationModel<PlantaModel> implements Ser
     private String genetica;
     private String porcentagemTHC;
     private String porcentagemCDB;
-    private String cor;
-    private String aroma;
-    private String terpenoDominante;
-    private String terpenosSecundarios;
-    private String beneficios;
-    private String maleficios;
-    private String ajudaMedica;
     private String paisOrigem;
     private String alturaEmCM;
     private String gramaPorMetroQuadrado;
