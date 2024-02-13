@@ -46,10 +46,10 @@ public class UsuarioController {
         if (!listaTodosUsuarios.isEmpty()) {
             for (UsuarioModel usuario : listaTodosUsuarios) {
                 String id = usuario.getId();
-                usuario.add(linkTo(methodOn(UsuarioController.class).listarUsuario(id)).withSelfRel());
-                usuario.add(linkTo(methodOn(UsuarioController.class, ativarUsuario(id))).withSelfRel());
-                usuario.add(linkTo(methodOn(UsuarioController.class, desativarUsuario(id))).withSelfRel());
-                usuario.add(linkTo(methodOn(UsuarioController.class, deletarUsuario(id))).withSelfRel());
+                usuario.add(linkTo(methodOn(UsuarioController.class).listarUsuario(id)).withRel("listar"));
+                usuario.add(linkTo(methodOn(UsuarioController.class).ativarUsuario(id)).withRel("ativar"));
+                usuario.add(linkTo(methodOn(UsuarioController.class).desativarUsuario(id)).withRel("desativar"));
+                usuario.add(linkTo(methodOn(UsuarioController.class).deletarUsuario(id)).withRel("deletar"));
             }
         }
         return ResponseEntity.status(HttpStatus.OK).body(listaTodosUsuarios);
@@ -61,10 +61,10 @@ public class UsuarioController {
         if (usuario.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado.");
         }
-        usuario.get().add(linkTo(methodOn(UsuarioController.class).listarTodosUsuarios()).withSelfRel());
-        usuario.get().add(linkTo(methodOn(UsuarioController.class, ativarUsuario(id))).withSelfRel());
-        usuario.get().add(linkTo(methodOn(UsuarioController.class, desativarUsuario(id))).withSelfRel());
-        usuario.get().add(linkTo(methodOn(UsuarioController.class, deletarUsuario(id))).withSelfRel());
+        usuario.get().add(linkTo(methodOn(UsuarioController.class).listarTodosUsuarios()).withRel("listarTodos"));
+        usuario.get().add(linkTo(methodOn(UsuarioController.class).ativarUsuario(id)).withRel("ativar"));
+        usuario.get().add(linkTo(methodOn(UsuarioController.class).desativarUsuario(id)).withRel("desativar"));
+        usuario.get().add(linkTo(methodOn(UsuarioController.class).deletarUsuario(id)).withRel("deletar"));
         return ResponseEntity.status(HttpStatus.OK).body(usuario.get());
     }
 
@@ -99,6 +99,6 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado.");
         }
         usuarioRepository.delete(usuario.get());
-        return ResponseEntity.status(HttpStatus.OK).body("Usuário deletado com sucesso.")
+        return ResponseEntity.status(HttpStatus.OK).body("Usuário deletado com sucesso.");
     }
 }
