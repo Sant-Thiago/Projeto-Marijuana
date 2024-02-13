@@ -52,6 +52,7 @@ public class UsuarioController {
                 usuario.add(linkTo(methodOn(UsuarioController.class).listarUsuario(id)).withRel("listar"));
                 usuario.add(linkTo(methodOn(UsuarioController.class).ativarUsuario(id)).withRel("ativar"));
                 usuario.add(linkTo(methodOn(UsuarioController.class).desativarUsuario(id)).withRel("desativar"));
+                usuario.add(linkTo(methodOn(UsuarioController.class).alterarFoto(id, null)).withRel("alterar"));
                 usuario.add(linkTo(methodOn(UsuarioController.class).deletarUsuario(id)).withRel("deletar"));
             }
         }
@@ -67,6 +68,7 @@ public class UsuarioController {
         usuario.get().add(linkTo(methodOn(UsuarioController.class).listarTodosUsuarios()).withRel("listarTodos"));
         usuario.get().add(linkTo(methodOn(UsuarioController.class).ativarUsuario(id)).withRel("ativar"));
         usuario.get().add(linkTo(methodOn(UsuarioController.class).desativarUsuario(id)).withRel("desativar"));
+        usuario.get().add(linkTo(methodOn(UsuarioController.class).alterarFoto(id, null)).withRel("alterar"));
         usuario.get().add(linkTo(methodOn(UsuarioController.class).deletarUsuario(id)).withRel("deletar"));
         return ResponseEntity.status(HttpStatus.OK).body(usuario.get());
     }
@@ -101,14 +103,19 @@ public class UsuarioController {
         if (usuario.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado.");
         }
-        var usuarioModel = new UsuarioModel();
+        var usuarioModel = usuario.get();
         try {
-            BeanUtils.copyProperties(usuario.get(), usuarioModel);
+            if (foto == null) {
+                usuarioModel.setFoto(null);
+                return ResponseEntity.status(HttpStatus.OK).body("Imagem foi anulada" + usuarioRepository.save(usuarioModel));
+            }
             usuarioModel.setFoto(foto.getBytes());
+            // pendencias
+            return ResponseEntity.status(HttpStatus.OK).body("Usuário atualizado: " + usuarioRepository.save(usuarioModel));
         } catch (IOException e) {
             e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao processar a imagem.");
         }
-        return ResponseEntity.status(HttpStatus.OK).body("Usuário atualizado: " + usuarioRepository.save(usuarioModel));
     }
 
     @DeleteMapping("/deletar/{id}")
