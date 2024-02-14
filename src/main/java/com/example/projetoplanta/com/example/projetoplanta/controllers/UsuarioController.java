@@ -48,9 +48,10 @@ public class UsuarioController {
             for (UsuarioModel usuario : listaTodosUsuarios) {
                 String id = usuario.getId();
                 usuario.add(linkTo(methodOn(UsuarioController.class).listarUsuario(id)).withRel("listar"));
+                usuario.add(linkTo(methodOn(UsuarioController.class).modificarUsuario(id, null)).withRel("modificarUsuário"));
                 usuario.add(linkTo(methodOn(UsuarioController.class).ativarUsuario(id)).withRel("ativar"));
                 usuario.add(linkTo(methodOn(UsuarioController.class).desativarUsuario(id)).withRel("desativar"));
-                usuario.add(linkTo(methodOn(UsuarioController.class).alterarFoto(id, null)).withRel("alterar"));
+                usuario.add(linkTo(methodOn(UsuarioController.class).alterarFoto(id, null)).withRel("alterarFoto"));
                 usuario.add(linkTo(methodOn(UsuarioController.class).deletarUsuario(id)).withRel("deletar"));
             }
         }
@@ -64,6 +65,7 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado.");
         }
         usuario.get().add(linkTo(methodOn(UsuarioController.class).listarTodosUsuarios()).withRel("listarTodos"));
+        usuario.get().add(linkTo(methodOn(UsuarioController.class).modificarUsuario(id, null)).withRel("modificarUsuário"));
         usuario.get().add(linkTo(methodOn(UsuarioController.class).ativarUsuario(id)).withRel("ativar"));
         usuario.get().add(linkTo(methodOn(UsuarioController.class).desativarUsuario(id)).withRel("desativar"));
         usuario.get().add(linkTo(methodOn(UsuarioController.class).alterarFoto(id, null)).withRel("alterar"));
