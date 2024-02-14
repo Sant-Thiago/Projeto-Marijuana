@@ -81,6 +81,7 @@ public class UsuarioController {
         }
         var usuarioModel = usuario.get();
         BeanUtils.copyProperties(usuarioDTO, usuarioModel);
+        usuarioRepository.save(usuarioModel);
         return ResponseEntity.status(HttpStatus.OK).body("Usuário modificado com sucesso.");
     }
 
