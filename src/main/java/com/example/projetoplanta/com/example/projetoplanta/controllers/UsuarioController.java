@@ -87,7 +87,7 @@ public class UsuarioController {
         BeanUtils.copyProperties(usuarioDTO, usuarioModel);
         usuarioRepository.save(usuarioModel);
         if (usuarioModel.getFoto() != null) {
-            var solicitacaoModel = new SolicitacaoModel(usuarioModel, usuarioModel.getFoto());
+            var solicitacaoModel = new SolicitacaoModel(usuarioModel, usuarioModel.getFoto(), "PENDENTE");
             solicitacaoRepository.save(solicitacaoModel);
         }
         return ResponseEntity.status(HttpStatus.OK).body("Usuário modificado com sucesso.");
@@ -129,7 +129,7 @@ public class UsuarioController {
             }
             usuarioModel.setFoto(foto.getBytes());
 
-            var solicitacaoModel = new SolicitacaoModel(usuarioModel, foto.getBytes());
+            var solicitacaoModel = new SolicitacaoModel(usuarioModel, foto.getBytes(), "PENDENTE");
             solicitacaoRepository.save(solicitacaoModel);
             
             return ResponseEntity.status(HttpStatus.OK).body("Usuário atualizado: " + usuarioRepository.save(usuarioModel));

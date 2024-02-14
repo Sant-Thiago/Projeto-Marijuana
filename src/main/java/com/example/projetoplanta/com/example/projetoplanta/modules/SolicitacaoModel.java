@@ -30,7 +30,7 @@ public class SolicitacaoModel extends RepresentationModel<SolicitacaoModel> impl
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @ManyToOne
     @JoinColumn(name = "solicitante")
@@ -39,8 +39,9 @@ public class SolicitacaoModel extends RepresentationModel<SolicitacaoModel> impl
     private Timestamp dtArmazenamento;
     private String status; 
 
-    public SolicitacaoModel(UsuarioModel solicitante, byte[] fotoUsuario) {
+    public SolicitacaoModel(UsuarioModel solicitante, byte[] fotoUsuario, String status) {
         this.solicitante = solicitante;
         this.fotoUsuario = fotoUsuario;
+        this.status = status;
     } 
 }

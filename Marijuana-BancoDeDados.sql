@@ -2,6 +2,8 @@ CREATE DATABASE planta_database;
 
 USE planta_database;
 
+SHOW TABLES;
+
 CREATE TABLE usuario (
 	id VARCHAR(255) PRIMARY KEY NOT NULL,
     email VARCHAR(45) NOT NULL UNIQUE,
