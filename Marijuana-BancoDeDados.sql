@@ -41,7 +41,7 @@ CREATE TABLE duende (
 );
 
 CREATE TABLE solicitacao (
-	id INT PRIMARY KEY NOT NULL,
+	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     solicitante VARCHAR(255) NOT NULL,
 		CONSTRAINT fkSolicitanteSol FOREIGN KEY (solicitante) REFERENCES usuario(id),
     fotoUsuario BLOB,

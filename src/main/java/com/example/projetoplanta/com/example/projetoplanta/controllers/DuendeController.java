@@ -56,9 +56,13 @@ public class DuendeController {
     @PostMapping("/virar/duende")
     public ResponseEntity<Object> virarDuende(@RequestBody @Valid DuendeRecordDTO duende) {
         var duendeModel = new DuendeModel();
-        BeanUtils.copyProperties(duende, duendeModel);
-        duendeRepository.save(duendeModel);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Usuário " + duendeModel.getNumeroNascionalId() + ". Criado com sucesso.");
+        try {
+            BeanUtils.copyProperties(duende, duendeModel);
+            duendeRepository.save(duendeModel);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Duende " + duendeModel.getNumeroNascionalId() + ". Criado com sucesso.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário com id:" + duendeModel.getFkUsuario() + ", não encontrado. \nErro : " + e);
+        }
     }
 
     @DeleteMapping("deletar/duende/{id}")

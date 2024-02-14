@@ -14,9 +14,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 
 @Getter
 @Setter
@@ -25,7 +27,7 @@ import lombok.Setter;
 @Table(name = "duende")
 @EqualsAndHashCode(of = "fkUsuario", callSuper = false)
 public class DuendeModel extends RepresentationModel<DuendeModel> implements Serializable{
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     @Id
     private String fkUsuario;
