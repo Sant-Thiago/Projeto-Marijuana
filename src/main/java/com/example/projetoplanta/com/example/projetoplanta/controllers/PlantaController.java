@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.projetoplanta.com.example.projetoplanta.DTO.PlantaRecordDTO;
@@ -25,20 +24,19 @@ import com.example.projetoplanta.com.example.projetoplanta.repositories.PlantaRe
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/planta")
 public class PlantaController {
     
     @Autowired
     PlantaRepository plantaRepository;
 
-    @PostMapping("/cadastrar")
+    @PostMapping("/cadastrar/planta")
     public ResponseEntity<PlantaModel> cadastrarPlanta(@RequestBody @Valid PlantaRecordDTO planta) {
         var plantaModel = new PlantaModel();
         BeanUtils.copyProperties(planta, plantaModel);
         return ResponseEntity.status(HttpStatus.CREATED).body(plantaRepository.save(plantaModel));
     }
 
-    @GetMapping
+    @GetMapping("/listar/plantas")
     public ResponseEntity<List<PlantaModel>> listarTodasPlantas() {
         List<PlantaModel> listaTodasPlantas = plantaRepository.findAll();
         if (!listaTodasPlantas.isEmpty()) {
@@ -52,7 +50,7 @@ public class PlantaController {
         return ResponseEntity.status(HttpStatus.OK).body(listaTodasPlantas);
     }
 
-    @GetMapping("/listar/{id}")
+    @GetMapping("/listar/planta/{id}")
     public ResponseEntity<Object> listarPlanta(@PathVariable(value = "id") String id) {
         Optional<PlantaModel> planta = plantaRepository.findById(id);
         if (planta.isEmpty()) {
@@ -63,7 +61,7 @@ public class PlantaController {
         return ResponseEntity.status(HttpStatus.OK).body(planta.get());
     }
 
-    @PutMapping("/atualizar/{id}")
+    @PutMapping("/atualizar/planta/{id}")
     public ResponseEntity<Object> atualizarPlanta(@PathVariable(value = "id") String id, @RequestBody @Valid PlantaRecordDTO plantaRecordDTO ) {
         Optional<PlantaModel> planta = plantaRepository.findById(id);
         if (planta.isEmpty()) {

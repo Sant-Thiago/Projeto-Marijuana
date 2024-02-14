@@ -1,15 +1,12 @@
 package com.example.projetoplanta.com.example.projetoplanta.modules;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
-import org.hibernate.annotations.GeneratedColumn;
-import org.springframework.aot.generate.Generated;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.hateoas.RepresentationModel;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.ForeignKey;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -31,9 +28,9 @@ public class DuendeModel extends RepresentationModel<DuendeModel> implements Ser
     private static final long serialVersionUID = 1L;
 
     @Id
-    @ForeignKey
     private String fkUsuario;
     private String numeroNascionalId;
-    // private Time dtIntegracao
+    @CreationTimestamp
+    private Timestamp dtIntegracao;
     
 }

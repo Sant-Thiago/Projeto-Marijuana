@@ -7,7 +7,6 @@ import java.util.Optional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,13 +28,12 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping("/usuario")
 public class UsuarioController {
 
     @Autowired
     UsuarioRepository usuarioRepository;
 
-    @PostMapping("/cadastrar")
+    @PostMapping("/cadastrar/usuario")
     public ResponseEntity<UsuarioModel> cadastrarUsuario(@RequestBody @Valid UsuarioRecordDTO usuario) {
         var usuarioModel = new UsuarioModel();
         BeanUtils.copyProperties(usuario, usuarioModel);
@@ -44,7 +41,7 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioRepository.save(usuarioModel));
     }
 
-    @GetMapping
+    @GetMapping("/listar/usuarios")
     public ResponseEntity<List<UsuarioModel>> listarTodosUsuarios() {
         List<UsuarioModel> listaTodosUsuarios = usuarioRepository.findAll();
         if (!listaTodosUsuarios.isEmpty()) {
@@ -60,7 +57,7 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(listaTodosUsuarios);
     }
 
-    @GetMapping("/listar/{id}")
+    @GetMapping("/listar/usuario/{id}")
     public ResponseEntity<Object> listarUsuario(@PathVariable(value = "id") String id) {
         Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
         if (usuario.isEmpty()) {
@@ -74,7 +71,7 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(usuario.get());
     }
 
-    @PutMapping("/modificar/{id}")
+    @PutMapping("/modificar/usuario/{id}")
     public ResponseEntity<Object> modificarUsuario(@PathVariable(value = "id") String id, @RequestBody @Valid UsuarioRecordDTO usuarioDTO) {
         Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
         if (usuario.isEmpty()) {
@@ -85,7 +82,7 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body("Usuário modificado com sucesso.");
     }
 
-    @PutMapping("/ativar/{id}")
+    @PutMapping("/ativar/usuario/{id}")
     public ResponseEntity<Object> ativarUsuario(@PathVariable(value = "id") String id) {
         Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
         if (usuario.isEmpty()) {
@@ -96,7 +93,7 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body("Usuário atualizado: " + usuarioRepository.save(usuarioModel));
     }
 
-    @PutMapping("/desativar/{id}")
+    @PutMapping("/desativar/usuario/{id}")
     public ResponseEntity<Object> desativarUsuario(@PathVariable(value = "id") String id) {
         Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
         if (usuario.isEmpty()) {
@@ -107,7 +104,7 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body("Usuário atualizado: " + usuarioRepository.save(usuarioModel));
     }
 
-    @PutMapping("/imagem/{id}")
+    @PutMapping("/alterar/foto/usuario/{id}")
     public ResponseEntity<Object> alterarFoto(@PathVariable(value = "id") String id, @RequestParam("foto") MultipartFile foto) {
         Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
         if (usuario.isEmpty()) {
@@ -128,7 +125,7 @@ public class UsuarioController {
         }
     }
 
-    @DeleteMapping("/deletar/{id}")
+    @DeleteMapping("/deletar/usuario/{id}")
     public ResponseEntity<Object> deletarUsuario(@PathVariable(value = "id") String id) {
         Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
         if (usuario.isEmpty()) {
