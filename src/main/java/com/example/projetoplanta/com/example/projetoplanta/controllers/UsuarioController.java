@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -73,7 +74,16 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(usuario.get());
     }
 
-    
+    @PutMapping("/modificar/{id}")
+    public ResponseEntity<Object> modificarUsuario(@PathVariable(value = "id") String id, @RequestBody @Valid UsuarioRecordDTO usuarioDTO) {
+        Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
+        if (usuario.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado.");
+        }
+        var usuarioModel = usuario.get();
+        BeanUtils.copyProperties(usuarioDTO, usuarioModel);
+        return ResponseEntity.status(HttpStatus.OK).body("Usuário modificado com sucesso.");
+    }
 
     @PutMapping("/ativar/{id}")
     public ResponseEntity<Object> ativarUsuario(@PathVariable(value = "id") String id) {
@@ -81,8 +91,7 @@ public class UsuarioController {
         if (usuario.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado.");
         }
-        var usuarioModel = new UsuarioModel();
-        BeanUtils.copyProperties(usuario.get(), usuarioModel);
+        var usuarioModel = usuario.get();
         usuarioModel.setStatus("ATIVADO");
         return ResponseEntity.status(HttpStatus.OK).body("Usuário atualizado: " + usuarioRepository.save(usuarioModel));
     }
@@ -93,8 +102,7 @@ public class UsuarioController {
         if (usuario.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado.");
         }
-        var usuarioModel = new UsuarioModel();
-        BeanUtils.copyProperties(usuario.get(), usuarioModel);
+        var usuarioModel = usuario.get();
         usuarioModel.setStatus("DESATIVADO");
         return ResponseEntity.status(HttpStatus.OK).body("Usuário atualizado: " + usuarioRepository.save(usuarioModel));
     }
