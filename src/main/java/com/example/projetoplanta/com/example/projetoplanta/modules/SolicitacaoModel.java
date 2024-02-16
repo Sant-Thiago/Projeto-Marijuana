@@ -35,13 +35,9 @@ public class SolicitacaoModel extends RepresentationModel<SolicitacaoModel> impl
     @ManyToOne
     @JoinColumn(name = "solicitante")
     private UsuarioModel solicitante;
+    private String tipo;
+    private String motivo;
     private byte[] fotoUsuario;
     private Timestamp dtArmazenamento;
     private String status; 
-
-    public SolicitacaoModel(UsuarioModel solicitante, byte[] fotoUsuario, String status) {
-        this.solicitante = solicitante;
-        this.fotoUsuario = fotoUsuario;
-        this.status = status;
-    } 
 }

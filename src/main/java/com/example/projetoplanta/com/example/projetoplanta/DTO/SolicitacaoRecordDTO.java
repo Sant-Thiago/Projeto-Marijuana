@@ -7,6 +7,9 @@ import jakarta.validation.constraints.NotBlank;
 public record SolicitacaoRecordDTO(
     @NotBlank
     String solicitacao,
+    @NotBlank
+    String tipo,
+    String motivo,
     Byte[] fotoUsuario,
     Timestamp dtArmazenamento,
     @NotBlank

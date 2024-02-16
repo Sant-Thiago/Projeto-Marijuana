@@ -19,9 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.projetoplanta.com.example.projetoplanta.DTO.UsuarioRecordDTO;
-import com.example.projetoplanta.com.example.projetoplanta.modules.SolicitacaoModel;
 import com.example.projetoplanta.com.example.projetoplanta.modules.UsuarioModel;
-import com.example.projetoplanta.com.example.projetoplanta.repositories.SolicitacaoRepository;
 import com.example.projetoplanta.com.example.projetoplanta.repositories.UsuarioRepository;
 
 import jakarta.validation.Valid;
@@ -34,8 +32,8 @@ public class UsuarioController {
 
     @Autowired
     UsuarioRepository usuarioRepository;
-    @Autowired
-    SolicitacaoRepository solicitacaoRepository;
+    
+    SolicitacaoController solicitacao = new SolicitacaoController();
 
     @PostMapping("/cadastrar/usuario")
     public ResponseEntity<UsuarioModel> cadastrarUsuario(@RequestBody @Valid UsuarioRecordDTO usuario) {
@@ -86,10 +84,7 @@ public class UsuarioController {
         var usuarioModel = usuario.get();
         BeanUtils.copyProperties(usuarioDTO, usuarioModel);
         usuarioRepository.save(usuarioModel);
-        if (usuarioModel.getFoto() != null) {
-            var solicitacaoModel = new SolicitacaoModel(usuarioModel, usuarioModel.getFoto(), "PENDENTE");
-            solicitacaoRepository.save(solicitacaoModel);
-        }
+        if (usuarioModel.getFoto() != null) solicitacao.solicitarFoto(usuarioModel, usuarioModel.getFoto());
         return ResponseEntity.status(HttpStatus.OK).body("Usuário modificado com sucesso.");
     }
 
@@ -128,10 +123,7 @@ public class UsuarioController {
                 return ResponseEntity.status(HttpStatus.OK).body("Imagem foi anulada" + usuarioRepository.save(usuarioModel));
             }
             usuarioModel.setFoto(foto.getBytes());
-
-            var solicitacaoModel = new SolicitacaoModel(usuarioModel, foto.getBytes(), "PENDENTE");
-            solicitacaoRepository.save(solicitacaoModel);
-            
+            solicitacao.solicitarFoto(usuarioModel, foto.getBytes());            
             return ResponseEntity.status(HttpStatus.OK).body("Usuário atualizado: " + usuarioRepository.save(usuarioModel));
         } catch (IOException e) {
             e.printStackTrace();
