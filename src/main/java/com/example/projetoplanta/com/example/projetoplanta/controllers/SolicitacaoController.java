@@ -1,11 +1,15 @@
 package com.example.projetoplanta.com.example.projetoplanta.controllers;
 
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,13 +28,15 @@ public class SolicitacaoController {
 
     SolicitacaoModel solicitacaoModel = new SolicitacaoModel();
 
-    @PostMapping("/listar/solicitacoes")
+    @GetMapping("/listar/solicitacoes")
     public ResponseEntity<List<SolicitacaoModel>> listarSolicitacoes() {
         List<SolicitacaoModel> listaSolicitacoes = solicitacaoRepository.findAll();
-        // for (SolicitacaoModel solicitacao : listaSolicitacoes) {
-        //     Integer id = solicitacao.getId();
-        //     solicitacao.add(linkTo(methodOn(SolicitacaoController.class)).withRel("alguma coisa"));
-        // }
+        if (!listaSolicitacoes.isEmpty()) {
+            for (SolicitacaoModel solicitacaoModel : listaSolicitacoes) {
+                solicitacaoModel.add(linkTo(methodOn(SolicitacaoController.class).solicitarDuende(null, null)).withRel("solicitarDuende"));
+                solicitacaoModel.add(linkTo(methodOn(SolicitacaoController.class).solicitarFoto(null, null)).withRel("solicitarFoto"));
+            }
+        }
         return ResponseEntity.status(HttpStatus.OK).body(listaSolicitacoes);
     }
 

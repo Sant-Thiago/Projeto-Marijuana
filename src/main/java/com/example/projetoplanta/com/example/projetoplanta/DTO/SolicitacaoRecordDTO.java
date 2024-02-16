@@ -10,7 +10,7 @@ public record SolicitacaoRecordDTO(
     @NotBlank
     String tipo,
     String motivo,
-    Byte[] fotoUsuario,
+    Byte[] fotoUsuario, // mudar para string, para receber o endereço da imagem
     Timestamp dtArmazenamento,
     @NotBlank
     String status) {}

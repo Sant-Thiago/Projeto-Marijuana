@@ -37,7 +37,7 @@ public class SolicitacaoModel extends RepresentationModel<SolicitacaoModel> impl
     private UsuarioModel solicitante;
     private String tipo;
     private String motivo;
-    private byte[] fotoUsuario;
+    private byte[] fotoUsuario; // mudar para string, para receber o endereço da imagem
     private Timestamp dtArmazenamento;
     private String status; 
 }

@@ -42,6 +42,25 @@ CREATE TABLE duende (
     dtIntegracao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE favorito (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    fkUsuario VARCHAR(255),
+		CONSTRAINT fkUsuarioF FOREIGN KEY (fkUsuario) REFERENCES usuario(id),
+	fkPlanta VARCHAR(420),
+		CONSTRAINT fkPlantaF FOREIGN KEY (fkPlanta) REFERENCES planta(id),
+	data TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE comentario (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    mensagem TEXT NOT NULL,
+    fkUsuario VARCHAR(255),
+		CONSTRAINT fkUsuarioC FOREIGN KEY (fkUsuario) REFERENCES usuario(id),
+	fkPlanta VARCHAR(420),
+		CONSTRAINT fkPlantaC FOREIGN KEY (fkPlanta) REFERENCES planta(id),
+    data TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE solicitacao (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     solicitante VARCHAR(255) NOT NULL,
@@ -60,36 +79,32 @@ FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_NAME = 'solicitacao'
 AND COLUMN_NAME = 'fotoUsuario';
 
-CREATE TABLE aroma (
-    fkPlanta VARCHAR(420),
-		CONSTRAINT fkPlantaA FOREIGN KEY (fkPlanta) REFERENCES planta(id),
-    nome VARCHAR(42),
-    PRIMARY KEY(fkPlanta, nome),
+CREATE TABLE aroma_terpeno (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    tipo VARCHAR(7) NOT NULL,
+		CONSTRAINT chTipoAT CHECK (tipo IN ("AROMA", "TERPENO")),
+    nome VARCHAR(42) NOT NULL,
     caracterista VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE terpeno (
-    fkPlanta VARCHAR(420),
-		CONSTRAINT fkPlantaT FOREIGN KEY (fkPlanta) REFERENCES planta(id),
-    nome VARCHAR(255),
-    PRIMARY KEY(fkPlanta, nome),
-    caracterista VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE beneficio (
-    fkPlanta VARCHAR(420),
-		CONSTRAINT fkPlantaBen FOREIGN KEY (fkPlanta) REFERENCES planta(id),
-    nome VARCHAR(255),
-    PRIMARY KEY(fkPlanta, nome),
+CREATE TABLE efeito (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    tipo CHAR(8),
+		CONSTRAINT tipoE CHECK (tipo IN ("Benefício", "Malefício")),
+    nome VARCHAR(255) NOT NULL,
     motivo VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE maleficio (
-    fkPlanta VARCHAR(420),
-		CONSTRAINT fkPlantaMal FOREIGN KEY (fkPlanta) REFERENCES planta(id),
-    nome VARCHAR(255),
-    PRIMARY KEY(fkPlanta, nome),
-    motivo VARCHAR(255) NOT NULL
+CREATE TABLE caracteristicaPlanta (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	fkPlanta VARCHAR(420),
+		CONSTRAINT fkPlantaCP FOREIGN KEY (fkPlanta) REFERENCES planta(id),
+	fkAroma_terpeno INT,
+		CONSTRAINT fkAroma_terpenoCP FOREIGN KEY (fkAroma_terpeno) REFERENCES aroma_terpeno(id),
+	fkEfeito INT,
+		CONSTRAINT fkEfeitoCP FOREIGN KEY (fkEfeito) REFERENCES efeito(id),
+    responsavel VARCHAR(255),
+		CONSTRAINT fkResponsavelRATP FOREIGN KEY (responsavel) REFERENCES duende(fkUsuario)
 );
 
 CREATE TABLE imagemPlanta (
