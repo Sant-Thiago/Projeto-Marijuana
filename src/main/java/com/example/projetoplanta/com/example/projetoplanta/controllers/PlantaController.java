@@ -42,7 +42,7 @@ public class PlantaController {
         if (!listaTodasPlantas.isEmpty()) {
             for (PlantaModel planta : listaTodasPlantas) {
                 String id = planta.getId();
-                planta.add(linkTo(methodOn(PlantaController.class).listarPlanta(id)).withRel("listar"));
+                planta.add(linkTo(methodOn(PlantaController.class).selecionarPlanta(id)).withRel("listar"));
                 planta.add(linkTo(methodOn(PlantaController.class).atualizarPlanta(id, null)).withRel("atualizar"));
 
             }
@@ -50,8 +50,8 @@ public class PlantaController {
         return ResponseEntity.status(HttpStatus.OK).body(listaTodasPlantas);
     }
 
-    @GetMapping("/listar/planta/{id}")
-    public ResponseEntity<Object> listarPlanta(@PathVariable(value = "id") String id) {
+    @GetMapping("/selecionar/planta/{id}")
+    public ResponseEntity<Object> selecionarPlanta(@PathVariable(value = "id") String id) {
         Optional<PlantaModel> planta = plantaRepository.findById(id);
         if (planta.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Planta não encontrada.");

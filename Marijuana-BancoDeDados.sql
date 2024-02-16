@@ -44,9 +44,9 @@ CREATE TABLE duende (
 
 CREATE TABLE favorito (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    fkUsuario VARCHAR(255),
+    fkUsuario VARCHAR(255) NOT NULL,
 		CONSTRAINT fkUsuarioF FOREIGN KEY (fkUsuario) REFERENCES usuario(id),
-	fkPlanta VARCHAR(420),
+	fkPlanta VARCHAR(420) NOT NULL,
 		CONSTRAINT fkPlantaF FOREIGN KEY (fkPlanta) REFERENCES planta(id),
 	data TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

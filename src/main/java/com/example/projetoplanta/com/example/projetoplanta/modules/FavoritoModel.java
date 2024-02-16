@@ -1,10 +1,16 @@
 package com.example.projetoplanta.com.example.projetoplanta.modules;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 import org.springframework.hateoas.RepresentationModel;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,11 +31,13 @@ public class FavoritoModel extends RepresentationModel<FavoritoModel> implements
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     private String mensagem;
     @ManyToOne
-    private String fkUsuario;
+    @JoinColumn(name = "fkUsuario")
+    private UsuarioModel fkUsuario;
     @ManyToOne
-    private String fkPlanta;
+    @JoinColumn(name = "fkPlanta")
+    private PlantaModel fkPlanta;
     private Timestamp data;
 }

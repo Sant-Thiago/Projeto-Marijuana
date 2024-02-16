@@ -2,11 +2,13 @@ package com.example.projetoplanta.com.example.projetoplanta.DTO;
 
 import java.sql.Timestamp;
 
+import com.example.projetoplanta.com.example.projetoplanta.modules.UsuarioModel;
+
 import jakarta.validation.constraints.NotBlank;
 
 public record SolicitacaoRecordDTO(
     @NotBlank
-    String solicitacao,
+    UsuarioModel solicitante,
     @NotBlank
     String tipo,
     String motivo,
