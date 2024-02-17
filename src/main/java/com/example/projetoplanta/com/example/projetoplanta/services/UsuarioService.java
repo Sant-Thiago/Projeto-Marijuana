@@ -4,27 +4,19 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.example.projetoplanta.com.example.projetoplanta.DTO.UsuarioRecordDTO;
-import com.example.projetoplanta.com.example.projetoplanta.controllers.UsuarioController;
-import com.example.projetoplanta.com.example.projetoplanta.exceptions.UsuarioNaoEncontradoException;
 import com.example.projetoplanta.com.example.projetoplanta.modules.UsuarioModel;
 import com.example.projetoplanta.com.example.projetoplanta.repositories.UsuarioRepository;
+import com.example.projetoplanta.com.example.projetoplanta.services.exceptions.DadoNaoEncontradoException;
 
 @Service
 public class UsuarioService {
     
     @Autowired
     UsuarioRepository usuarioRepository;
-
-    @Autowired
-    SolicitacaoService solicitacao;
 
     public void cadastrarUsuario(UsuarioRecordDTO usuarioRecordDTO) {
         var usuarioModel = new UsuarioModel();
@@ -40,7 +32,7 @@ public class UsuarioService {
     public List<UsuarioModel> listarTodosUsuarios() {
         List<UsuarioModel> listaTodosUsuarios = usuarioRepository.findAll();
         if (listaTodosUsuarios.isEmpty()) {
-            throw new UsuarioNaoEncontradoException("Usuários não encontrado.");
+            throw new DadoNaoEncontradoException("Usuários não encontrado.");
         }
         return listaTodosUsuarios;
     }
@@ -48,7 +40,7 @@ public class UsuarioService {
     public Optional<UsuarioModel> listarUsuario(String id) {
         Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
         if (usuario.isEmpty()) {
-            throw new UsuarioNaoEncontradoException("Usuário com o id: "+id+" não encontrado.");
+            throw new DadoNaoEncontradoException("Usuário com o id: "+id+" não encontrado.");
         }
         return usuario;
     }
@@ -56,42 +48,26 @@ public class UsuarioService {
     public void modificarUsuario(String id, UsuarioRecordDTO usuarioRecordDTO) {
         Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
             if (usuario.isEmpty()) {
-                throw new UsuarioNaoEncontradoException("Usuário com o id: "+id+" não encontrado.");
+                throw new DadoNaoEncontradoException("Usuário com o id: "+id+" não encontrado.");
             }
-            var usuarioModel = usuario.get();
-            DtoToModel(usuarioRecordDTO, usuarioModel);
-            if (usuarioModel.getFoto() != null) solicitacao.solicitarFoto(usuarioModel, usuarioModel.getFoto());
-            try {
-                usuarioRepository.save(usuarioModel);
-            } catch (Exception e) {
-                throw new RuntimeException("Erro ao atualizar usuário: "+ e.getMessage());
-            }
-    }
-
-    public void alterarFoto(String id, MultipartFile foto) {
-        Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
-            if (usuario.isEmpty()) {
-                throw new UsuarioNaoEncontradoException("Usuário com o id: "+id+" não encontrado.");
-            }
+        var solicitacao = new SolicitacaoService();
         var usuarioModel = usuario.get();
+        DtoToModel(usuarioRecordDTO, usuarioModel);
         try {
-            if (foto == null) {
+            if (usuarioModel.getFoto() != null) solicitacao.solicitarModificacao(usuarioRecordDTO, id);
+            else {
                 usuarioModel.setFoto(null);
-                usuarioRepository.save(usuarioModel);
-            } else {
-                usuarioModel.setFoto(foto.getBytes());
-                solicitacao.solicitarFoto(usuarioModel, foto.getBytes());            
-                usuarioRepository.save(usuarioModel);
             }
+            usuarioRepository.save(usuarioModel);
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao alterar a foto do usuário: "+ e.getMessage());
+            throw new RuntimeException("Erro ao atualizar usuário: "+ e.getMessage());
         }
     }
 
     public void statusUsuario(String id) {
         Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
         if (usuario.isEmpty()) {
-            throw new UsuarioNaoEncontradoException("Usuário com o id: "+id+" não encontrado.");
+            throw new DadoNaoEncontradoException("Usuário com o id: "+id+" não encontrado.");
         }
         var usuarioModel = usuario.get();
         if (usuarioModel.getStatus().equals("DESATIVADO")) usuarioModel.setStatus("ATIVADO");
@@ -106,7 +82,7 @@ public class UsuarioService {
     public void deletarUsuario(String id) {
         Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
         if (usuario.isEmpty()) {
-            throw new UsuarioNaoEncontradoException("Usuário com o id: "+id+" não encontrado.");
+            throw new DadoNaoEncontradoException("Usuário com o id: "+id+" não encontrado.");
         }
         try {
             usuarioRepository.delete(usuario.get());

@@ -1,10 +1,8 @@
 package com.example.projetoplanta.com.example.projetoplanta.controllers;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,15 +12,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.example.projetoplanta.com.example.projetoplanta.DTO.UsuarioRecordDTO;
-import com.example.projetoplanta.com.example.projetoplanta.exceptions.UsuarioNaoEncontradoException;
 import com.example.projetoplanta.com.example.projetoplanta.modules.UsuarioModel;
-import com.example.projetoplanta.com.example.projetoplanta.repositories.UsuarioRepository;
 import com.example.projetoplanta.com.example.projetoplanta.services.UsuarioService;
+import com.example.projetoplanta.com.example.projetoplanta.services.exceptions.DadoNaoEncontradoException;
 
 import jakarta.validation.Valid;
 
@@ -34,8 +29,6 @@ public class UsuarioController {
 
     @Autowired
     UsuarioService usuarioService;
-    
-    SolicitacaoController solicitacao = new SolicitacaoController();
 
     @PostMapping("/cadastrar/usuario")
     public ResponseEntity<Object> cadastrarUsuario(@RequestBody @Valid UsuarioRecordDTO usuario) {
@@ -45,14 +38,12 @@ public class UsuarioController {
 
     @GetMapping("/listar/usuarios")
     public ResponseEntity<List<UsuarioModel>> listarTodosUsuarios() {
-        // try
         List<UsuarioModel> listaTodosUsuarios = usuarioService.listarTodosUsuarios();
         for (UsuarioModel usuario : listaTodosUsuarios) {
             String id = usuario.getId();
             usuario.add(linkTo(methodOn(UsuarioController.class).listarUsuario(id)).withRel("listar"));
             usuario.add(linkTo(methodOn(UsuarioController.class).modificarUsuario(id, null)).withRel("modificarUsuário"));
             usuario.add(linkTo(methodOn(UsuarioController.class).statusUsuario(id)).withRel("ativar"));
-            usuario.add(linkTo(methodOn(UsuarioController.class).alterarFoto(id, null)).withRel("alterarFoto"));
             usuario.add(linkTo(methodOn(UsuarioController.class).deletarUsuario(id)).withRel("deletar"));
         }
         return ResponseEntity.status(HttpStatus.OK).body(listaTodosUsuarios);
@@ -60,12 +51,10 @@ public class UsuarioController {
 
     @GetMapping("/listar/usuario/{id}")
     public ResponseEntity<Object> listarUsuario(@PathVariable(value = "id") String id) {
-        // try
         Optional<UsuarioModel> usuario = usuarioService.listarUsuario(id);
         usuario.get().add(linkTo(methodOn(UsuarioController.class).listarTodosUsuarios()).withRel("listarTodos"));
         usuario.get().add(linkTo(methodOn(UsuarioController.class).modificarUsuario(id, null)).withRel("modificarUsuário"));
         usuario.get().add(linkTo(methodOn(UsuarioController.class).statusUsuario(id)).withRel("ativar"));
-        usuario.get().add(linkTo(methodOn(UsuarioController.class).alterarFoto(id, null)).withRel("alterar"));
         usuario.get().add(linkTo(methodOn(UsuarioController.class).deletarUsuario(id)).withRel("deletar"));
         return ResponseEntity.status(HttpStatus.OK).body(usuario.get());
     }
@@ -75,7 +64,7 @@ public class UsuarioController {
         try {
             usuarioService.modificarUsuario(id, usuarioDTO);
             return ResponseEntity.status(HttpStatus.OK).body("Usuário modificado com sucesso.");
-        } catch (UsuarioNaoEncontradoException e) {
+        } catch (DadoNaoEncontradoException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMensagem());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao modificar usuário.");
@@ -87,19 +76,7 @@ public class UsuarioController {
         try {
             usuarioService.statusUsuario(id);
             return ResponseEntity.status(HttpStatus.OK).body("Usuário ativo com sucesso.");  
-        } catch (UsuarioNaoEncontradoException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMensagem());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao modificar usuário.");
-        }
-    }
-
-    @PutMapping("/alterar/foto/usuario/{id}")
-    public ResponseEntity<Object> alterarFoto(@PathVariable(value = "id") String id, @RequestParam("foto") MultipartFile foto) {
-        try {
-            usuarioService.alterarFoto(id, foto);
-            return ResponseEntity.status(HttpStatus.OK).body("Foto alterada com sucesso");
-        } catch (UsuarioNaoEncontradoException e) {
+        } catch (DadoNaoEncontradoException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMensagem());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao modificar usuário.");
@@ -111,7 +88,7 @@ public class UsuarioController {
         try {
             usuarioService.deletarUsuario(id);
             return ResponseEntity.status(HttpStatus.OK).body("Usuário deletado com sucesso.");
-        } catch (UsuarioNaoEncontradoException e)  {
+        } catch (DadoNaoEncontradoException e)  {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMensagem());
         } catch (Exception e ) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao modificar usuário.");

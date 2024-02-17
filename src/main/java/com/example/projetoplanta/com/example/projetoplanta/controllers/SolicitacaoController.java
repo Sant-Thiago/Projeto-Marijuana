@@ -15,9 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.projetoplanta.com.example.projetoplanta.DTO.UsuarioRecordDTO;
 import com.example.projetoplanta.com.example.projetoplanta.modules.SolicitacaoModel;
-import com.example.projetoplanta.com.example.projetoplanta.modules.UsuarioModel;
-import com.example.projetoplanta.com.example.projetoplanta.repositories.SolicitacaoRepository;
 import com.example.projetoplanta.com.example.projetoplanta.services.SolicitacaoService;
 
 
@@ -31,29 +30,20 @@ public class SolicitacaoController {
 
     @GetMapping("/listar/solicitacoes")
     public ResponseEntity<List<SolicitacaoModel>> listarSolicitacoes() {
-        List<SolicitacaoModel> listaSolicitacoes = solicitacaoRepository.findAll();
-        if (!listaSolicitacoes.isEmpty()) {
-            for (SolicitacaoModel solicitacaoModel : listaSolicitacoes) {
-                solicitacaoModel.add(linkTo(methodOn(SolicitacaoController.class).solicitarDuende(null, null)).withRel("solicitarDuende"));
-                solicitacaoModel.add(linkTo(methodOn(SolicitacaoController.class).solicitarFoto(null, null)).withRel("solicitarFoto"));
-            }
+        List<SolicitacaoModel> listaSolicitacoes = solicitacaoService.listarSolicitacoes();
+        for (SolicitacaoModel solicitacaoModel : listaSolicitacoes) {
+            solicitacaoModel.add(linkTo(methodOn(SolicitacaoController.class).solicitarDuende(null, null)).withRel("solicitarDuende"));
         }
         return ResponseEntity.status(HttpStatus.OK).body(listaSolicitacoes);
     }
 
     @PostMapping("/solicitar/duende/{solicitante}")
-    public ResponseEntity<SolicitacaoModel> solicitarDuende(@PathVariable(name = "solicitante") UsuarioModel solicitante, @RequestParam("motivo") String motivo) {
-        solicitacaoModel.setSolicitante(solicitante);
-        solicitacaoModel.setMotivo(motivo);
-        solicitacaoModel.setTipo("DUENDE");
-        solicitacaoModel.setStatus("PENDENTE");
-        return ResponseEntity.status(HttpStatus.CREATED).body(solicitacaoRepository.save(solicitacaoModel));
+    public ResponseEntity<Object> solicitarDuende(@PathVariable(name = "solicitante") UsuarioRecordDTO solicitante, @RequestParam("motivo") String motivo) {
+        try {
+            solicitacaoService.solicitarDuende(solicitante, motivo);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Solicitação criada com sucesso.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao enviar a solicitação.");
+        }
     }
-
-    @PostMapping("/solicitar/foto") // Método utilizado apenas pelo usuario
-    public ResponseEntity<SolicitacaoModel> solicitarFoto(UsuarioModel usuarioModel, byte[] foto) {
-        solicitacaoService.solicitarFoto(usuarioModel, foto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(solicitacaoRepository.save(solicitacaoModel));
-    }
-
 }
