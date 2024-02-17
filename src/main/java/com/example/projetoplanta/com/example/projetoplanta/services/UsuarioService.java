@@ -1,9 +1,9 @@
 package com.example.projetoplanta.com.example.projetoplanta.services;
 
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +20,7 @@ public class UsuarioService {
 
     public void cadastrarUsuario(UsuarioRecordDTO usuarioRecordDTO) {
         var usuarioModel = new UsuarioModel();
-        DtoToModel(usuarioRecordDTO, usuarioModel);
+        BeanUtils.copyProperties(usuarioRecordDTO, usuarioModel);
         usuarioModel.setStatus("ATIVO");
         try {
             usuarioRepository.save(usuarioModel);
@@ -52,7 +52,7 @@ public class UsuarioService {
             }
         var solicitacao = new SolicitacaoService();
         var usuarioModel = usuario.get();
-        DtoToModel(usuarioRecordDTO, usuarioModel);
+        BeanUtils.copyProperties(usuarioRecordDTO, usuarioModel);
         try {
             if (usuarioModel.getFoto() != null) solicitacao.solicitarModificacao(usuarioRecordDTO, id);
             else {
@@ -64,19 +64,20 @@ public class UsuarioService {
         }
     }
 
-    public void statusUsuario(String id) {
+    public String statusUsuario(String id) {
         Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
         if (usuario.isEmpty()) {
             throw new DadoNaoEncontradoException("Usuário com o id: "+id+" não encontrado.");
         }
         var usuarioModel = usuario.get();
-        if (usuarioModel.getStatus().equals("DESATIVADO")) usuarioModel.setStatus("ATIVADO");
+        if (usuarioModel.getStatus().equals("DESATIVADO")) usuarioModel.setStatus("ATIVO");
         else usuarioModel.setStatus("DESATIVADO");
         try {
             usuarioRepository.save(usuarioModel);
         } catch (Exception e) {
             throw new RuntimeException("Erro ao atualizar o status do usuário: "+ e.getMessage());
         }
+        return usuarioModel.getStatus();
     }
 
     public void deletarUsuario(String id) {
@@ -89,17 +90,5 @@ public class UsuarioService {
         } catch (Exception e) {
             throw new RuntimeException("Erro ao deletar usuário: "+ e.getMessage());
         }
-    }
-
-    private UsuarioModel DtoToModel(UsuarioRecordDTO usuarioRecordDTO, UsuarioModel usuarioModel) {
-        for (Field field : usuarioRecordDTO.getClass().getDeclaredFields()) {
-            field.setAccessible(true);
-            try {
-                usuarioModel.getClass().getDeclaredField(field.getName()).set(usuarioModel, field.get(usuarioRecordDTO));
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-        return usuarioModel;
     }
 }

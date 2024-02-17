@@ -71,11 +71,11 @@ public class UsuarioController {
         }
     }
 
-    @PutMapping("/ativar/usuario/{id}")
+    @PutMapping("/status/usuario/{id}")
     public ResponseEntity<Object> statusUsuario(@PathVariable(value = "id") String id) {
         try {
-            usuarioService.statusUsuario(id);
-            return ResponseEntity.status(HttpStatus.OK).body("Usuário ativo com sucesso.");  
+            String status = usuarioService.statusUsuario(id);
+            return ResponseEntity.status(HttpStatus.OK).body("Status do usuário modificado com sucesso: "+status);  
         } catch (DadoNaoEncontradoException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMensagem());
         } catch (Exception e) {

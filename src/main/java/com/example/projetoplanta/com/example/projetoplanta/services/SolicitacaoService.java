@@ -12,31 +12,46 @@ import com.example.projetoplanta.com.example.projetoplanta.modules.UsuarioModel;
 import com.example.projetoplanta.com.example.projetoplanta.repositories.SolicitacaoRepository;
 import com.example.projetoplanta.com.example.projetoplanta.services.exceptions.DadoNaoEncontradoException;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
 @Service
 public class SolicitacaoService {
     
     @Autowired
     SolicitacaoRepository solicitacaoRepository;
 
+    @PersistenceContext
+    EntityManager entityManager;
+
     public List<SolicitacaoModel> listarSolicitacoes() {
         var listaSolicitacao = solicitacaoRepository.findAll();
         if (listaSolicitacao.isEmpty()) {
-            throw new DadoNaoEncontradoException("Nenhuma solicitação encontrada");
+            throw new DadoNaoEncontradoException("Nenhuma solicitação feita até o momento.");
         }
         return listaSolicitacao;
     }
 
-    public void solicitarDuende(UsuarioRecordDTO solicitanteDTO, String motivo) {
-        var solicitacaoModel = new SolicitacaoModel();
-        UsuarioModel solicitanteModel = DtoToModel(solicitanteDTO);
-        solicitacaoModel.setSolicitante(solicitanteModel);
-        solicitacaoModel.setMotivo(motivo);
-        solicitacaoModel.setTipo("DUENDE");
-        solicitacaoModel.setStatus("PENDENTE");
+    public String solicitarDuende(UsuarioModel solicitante, String motivo) {
         try {
-            solicitacaoRepository.save(solicitacaoModel);
+            var status = entityManager.createQuery("SELECT status FROM SolicitacaoModel WHERE solicitante = :fkusuario AND tipo = :tipo")
+                .setParameter("fkusuario", solicitante)
+                .setParameter("tipo", "DUENDE")
+                .getResultList();
+            if (status.size() >= 3) return "A solicitação está em análise.";
+            var solicitacaoModel = new SolicitacaoModel();
+            solicitacaoModel.setSolicitante(solicitante);
+            solicitacaoModel.setMotivo(motivo);
+            solicitacaoModel.setTipo("DUENDE");
+            solicitacaoModel.setStatus("PENDENTE");
+            try {
+                solicitacaoRepository.save(solicitacaoModel);
+                return "Solicitação feita com sucesso.";
+            } catch (Exception e) {
+                throw new RuntimeException("Erro ao enviar a solicitação: "+ e.getMessage());
+            }
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao enviar a solicitação: "+ e.getMessage());
+            throw new RuntimeException("Erro na query: "+e.getMessage());
         }
     }
 

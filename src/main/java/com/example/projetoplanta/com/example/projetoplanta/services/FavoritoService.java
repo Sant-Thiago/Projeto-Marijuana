@@ -36,7 +36,7 @@ public class FavoritoService {
 
     public void favoritarPlanta(UsuarioModel fkUsuario, PlantaModel fkPlanta) {
         try {
-            Integer id = (Integer) entityManager.createQuery("SELECT id FROM favorito WHERE fkUsuario = :fkusuario AND fkPlanta = :fkplanta")
+            Integer id = (Integer) entityManager.createQuery("SELECT id FROM FavoritoModel WHERE fkUsuario = :fkusuario AND fkPlanta = :fkplanta")
             .setParameter("fkusuario", fkUsuario)
             .setParameter("fkplanta", fkPlanta)
             .getSingleResult();
