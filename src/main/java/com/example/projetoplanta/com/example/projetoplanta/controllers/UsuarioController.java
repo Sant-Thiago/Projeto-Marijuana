@@ -39,36 +39,32 @@ public class UsuarioController {
 
     @PostMapping("/cadastrar/usuario")
     public ResponseEntity<Object> cadastrarUsuario(@RequestBody @Valid UsuarioRecordDTO usuario) {
+        usuarioService.cadastrarUsuario(usuario);
         return ResponseEntity.status(HttpStatus.CREATED).body("Usuário criado com sucesso.");
     }
 
     @GetMapping("/listar/usuarios")
     public ResponseEntity<List<UsuarioModel>> listarTodosUsuarios() {
-        List<UsuarioModel> listaTodosUsuarios = usuarioRepository.findAll();
-        if (!listaTodosUsuarios.isEmpty()) {
-            for (UsuarioModel usuario : listaTodosUsuarios) {
-                String id = usuario.getId();
-                usuario.add(linkTo(methodOn(UsuarioController.class).listarUsuario(id)).withRel("listar"));
-                usuario.add(linkTo(methodOn(UsuarioController.class).modificarUsuario(id, null)).withRel("modificarUsuário"));
-                usuario.add(linkTo(methodOn(UsuarioController.class).ativarUsuario(id)).withRel("ativar"));
-                usuario.add(linkTo(methodOn(UsuarioController.class).desativarUsuario(id)).withRel("desativar"));
-                usuario.add(linkTo(methodOn(UsuarioController.class).alterarFoto(id, null)).withRel("alterarFoto"));
-                usuario.add(linkTo(methodOn(UsuarioController.class).deletarUsuario(id)).withRel("deletar"));
-            }
+        // try
+        List<UsuarioModel> listaTodosUsuarios = usuarioService.listarTodosUsuarios();
+        for (UsuarioModel usuario : listaTodosUsuarios) {
+            String id = usuario.getId();
+            usuario.add(linkTo(methodOn(UsuarioController.class).listarUsuario(id)).withRel("listar"));
+            usuario.add(linkTo(methodOn(UsuarioController.class).modificarUsuario(id, null)).withRel("modificarUsuário"));
+            usuario.add(linkTo(methodOn(UsuarioController.class).statusUsuario(id)).withRel("ativar"));
+            usuario.add(linkTo(methodOn(UsuarioController.class).alterarFoto(id, null)).withRel("alterarFoto"));
+            usuario.add(linkTo(methodOn(UsuarioController.class).deletarUsuario(id)).withRel("deletar"));
         }
         return ResponseEntity.status(HttpStatus.OK).body(listaTodosUsuarios);
     }
 
     @GetMapping("/listar/usuario/{id}")
     public ResponseEntity<Object> listarUsuario(@PathVariable(value = "id") String id) {
-        Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
-        if (usuario.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado.");
-        }
+        // try
+        Optional<UsuarioModel> usuario = usuarioService.listarUsuario(id);
         usuario.get().add(linkTo(methodOn(UsuarioController.class).listarTodosUsuarios()).withRel("listarTodos"));
         usuario.get().add(linkTo(methodOn(UsuarioController.class).modificarUsuario(id, null)).withRel("modificarUsuário"));
-        usuario.get().add(linkTo(methodOn(UsuarioController.class).ativarUsuario(id)).withRel("ativar"));
-        usuario.get().add(linkTo(methodOn(UsuarioController.class).desativarUsuario(id)).withRel("desativar"));
+        usuario.get().add(linkTo(methodOn(UsuarioController.class).statusUsuario(id)).withRel("ativar"));
         usuario.get().add(linkTo(methodOn(UsuarioController.class).alterarFoto(id, null)).withRel("alterar"));
         usuario.get().add(linkTo(methodOn(UsuarioController.class).deletarUsuario(id)).withRel("deletar"));
         return ResponseEntity.status(HttpStatus.OK).body(usuario.get());
@@ -100,32 +96,27 @@ public class UsuarioController {
 
     @PutMapping("/alterar/foto/usuario/{id}")
     public ResponseEntity<Object> alterarFoto(@PathVariable(value = "id") String id, @RequestParam("foto") MultipartFile foto) {
-        Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
-        if (usuario.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado.");
-        }
-        var usuarioModel = usuario.get();
         try {
-            if (foto == null) {
-                usuarioModel.setFoto(null);
-                return ResponseEntity.status(HttpStatus.OK).body("Imagem foi anulada" + usuarioRepository.save(usuarioModel));
-            }
-            usuarioModel.setFoto(foto.getBytes());
-            solicitacao.solicitarFoto(usuarioModel, foto.getBytes());            
-            return ResponseEntity.status(HttpStatus.OK).body("Usuário atualizado: " + usuarioRepository.save(usuarioModel));
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao processar a imagem.");
+            usuarioService.alterarFoto(id, foto);
+            return ResponseEntity.status(HttpStatus.OK).body("Foto alterada com sucesso");
+        } catch (UsuarioNaoEncontradoException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMensagem());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao modificar usuário.");
         }
     }
 
     @DeleteMapping("/deletar/usuario/{id}")
     public ResponseEntity<Object> deletarUsuario(@PathVariable(value = "id") String id) {
-        Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
-        if (usuario.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado.");
+        try {
+            usuarioService.deletarUsuario(id);
+            return ResponseEntity.status(HttpStatus.OK).body("Usuário deletado com sucesso.");
+        } catch (UsuarioNaoEncontradoException e)  {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMensagem());
+        } catch (Exception e ) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao modificar usuário.");
         }
-        usuarioRepository.delete(usuario.get());
-        return ResponseEntity.status(HttpStatus.OK).body("Usuário deletado com sucesso.");
+        
+        
     }
 }
