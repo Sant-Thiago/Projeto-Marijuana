@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,6 +19,8 @@ import com.example.projetoplanta.com.example.projetoplanta.modules.FavoritoModel
 import com.example.projetoplanta.com.example.projetoplanta.modules.PlantaModel;
 import com.example.projetoplanta.com.example.projetoplanta.modules.UsuarioModel;
 import com.example.projetoplanta.com.example.projetoplanta.repositories.FavoritoRepository;
+
+import jakarta.validation.Valid;
 
 @RestController
 public class FavoritoController {
@@ -33,9 +36,9 @@ public class FavoritoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(favoritoRepository.save(favorito));
     }
 
-    @GetMapping("/listar/favoritos")
-    public ResponseEntity<List<FavoritoModel>> listarFavoritos() {
-        var listaFavoritos = favoritoRepository.findAll();
+    @GetMapping("/listar/favoritos/{fkusuario}")
+    public ResponseEntity<FavoritoModel> listarFavoritos(@RequestBody @Valid ) {
+        var listaFavoritos = favoritoRepository.findById(fkusuario);
         if (!listaFavoritos.isEmpty()) {
             for (FavoritoModel favorito : listaFavoritos) {
                 favorito.add(linkTo(methodOn(FavoritoController.class).favoritarPlanta(null, null)).withRel("favoritarPlanta"));

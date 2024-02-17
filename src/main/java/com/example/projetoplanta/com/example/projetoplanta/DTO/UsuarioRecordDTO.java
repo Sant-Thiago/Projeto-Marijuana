@@ -1,6 +1,5 @@
 package com.example.projetoplanta.com.example.projetoplanta.DTO;
 
-
 import jakarta.validation.constraints.NotBlank;
 
 public record UsuarioRecordDTO(
@@ -10,10 +9,8 @@ public record UsuarioRecordDTO(
     String senha, 
     @NotBlank   
     String nome, 
-    Byte[] foto,
+    byte[] foto,
     String pais, 
     String dtNascimento, 
     String genero, 
-    String status) {
-    
-}
+    String status) {}

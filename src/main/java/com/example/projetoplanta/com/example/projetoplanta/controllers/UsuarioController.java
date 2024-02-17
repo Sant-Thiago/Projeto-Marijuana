@@ -19,8 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.projetoplanta.com.example.projetoplanta.DTO.UsuarioRecordDTO;
+import com.example.projetoplanta.com.example.projetoplanta.exceptions.UsuarioNaoEncontradoException;
 import com.example.projetoplanta.com.example.projetoplanta.modules.UsuarioModel;
 import com.example.projetoplanta.com.example.projetoplanta.repositories.UsuarioRepository;
+import com.example.projetoplanta.com.example.projetoplanta.services.UsuarioService;
 
 import jakarta.validation.Valid;
 
@@ -31,16 +33,13 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class UsuarioController {
 
     @Autowired
-    UsuarioRepository usuarioRepository;
+    UsuarioService usuarioService;
     
     SolicitacaoController solicitacao = new SolicitacaoController();
 
     @PostMapping("/cadastrar/usuario")
-    public ResponseEntity<UsuarioModel> cadastrarUsuario(@RequestBody @Valid UsuarioRecordDTO usuario) {
-        var usuarioModel = new UsuarioModel();
-        BeanUtils.copyProperties(usuario, usuarioModel);
-        usuarioModel.setStatus("ATIVO");
-        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioRepository.save(usuarioModel));
+    public ResponseEntity<Object> cadastrarUsuario(@RequestBody @Valid UsuarioRecordDTO usuario) {
+        return ResponseEntity.status(HttpStatus.CREATED).body("Usuário criado com sucesso.");
     }
 
     @GetMapping("/listar/usuarios")
@@ -77,37 +76,26 @@ public class UsuarioController {
 
     @PutMapping("/modificar/usuario/{id}")
     public ResponseEntity<Object> modificarUsuario(@PathVariable(value = "id") String id, @RequestBody @Valid UsuarioRecordDTO usuarioDTO) {
-        Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
-        if (usuario.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado.");
+        try {
+            usuarioService.modificarUsuario(id, usuarioDTO);
+            return ResponseEntity.status(HttpStatus.OK).body("Usuário modificado com sucesso.");
+        } catch (UsuarioNaoEncontradoException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMensagem());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao modificar usuário.");
         }
-        var usuarioModel = usuario.get();
-        BeanUtils.copyProperties(usuarioDTO, usuarioModel);
-        usuarioRepository.save(usuarioModel);
-        if (usuarioModel.getFoto() != null) solicitacao.solicitarFoto(usuarioModel, usuarioModel.getFoto());
-        return ResponseEntity.status(HttpStatus.OK).body("Usuário modificado com sucesso.");
     }
 
     @PutMapping("/ativar/usuario/{id}")
-    public ResponseEntity<Object> ativarUsuario(@PathVariable(value = "id") String id) {
-        Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
-        if (usuario.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado.");
+    public ResponseEntity<Object> statusUsuario(@PathVariable(value = "id") String id) {
+        try {
+            usuarioService.statusUsuario(id);
+            return ResponseEntity.status(HttpStatus.OK).body("Usuário ativo com sucesso.");  
+        } catch (UsuarioNaoEncontradoException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMensagem());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao modificar usuário.");
         }
-        var usuarioModel = usuario.get();
-        usuarioModel.setStatus("ATIVADO");
-        return ResponseEntity.status(HttpStatus.OK).body("Usuário atualizado: " + usuarioRepository.save(usuarioModel));
-    }
-
-    @PutMapping("/desativar/usuario/{id}")
-    public ResponseEntity<Object> desativarUsuario(@PathVariable(value = "id") String id) {
-        Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
-        if (usuario.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado.");
-        }
-        var usuarioModel = usuario.get();
-        usuarioModel.setStatus("DESATIVADO");
-        return ResponseEntity.status(HttpStatus.OK).body("Usuário atualizado: " + usuarioRepository.save(usuarioModel));
     }
 
     @PutMapping("/alterar/foto/usuario/{id}")

@@ -18,13 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.projetoplanta.com.example.projetoplanta.modules.SolicitacaoModel;
 import com.example.projetoplanta.com.example.projetoplanta.modules.UsuarioModel;
 import com.example.projetoplanta.com.example.projetoplanta.repositories.SolicitacaoRepository;
+import com.example.projetoplanta.com.example.projetoplanta.services.SolicitacaoService;
 
 
 @RestController
 public class SolicitacaoController {
     
     @Autowired
-    SolicitacaoRepository solicitacaoRepository;
+    SolicitacaoService solicitacaoService;
 
     SolicitacaoModel solicitacaoModel = new SolicitacaoModel();
 
@@ -51,11 +52,7 @@ public class SolicitacaoController {
 
     @PostMapping("/solicitar/foto") // Método utilizado apenas pelo usuario
     public ResponseEntity<SolicitacaoModel> solicitarFoto(UsuarioModel usuarioModel, byte[] foto) {
-        solicitacaoModel.setSolicitante(usuarioModel);
-        solicitacaoModel.setFotoUsuario(foto);
-        solicitacaoModel.setMotivo(null);
-        solicitacaoModel.setTipo("FOTO");
-        solicitacaoModel.setStatus("PENDENTE");
+        solicitacaoService.solicitarFoto(usuarioModel, foto);
         return ResponseEntity.status(HttpStatus.CREATED).body(solicitacaoRepository.save(solicitacaoModel));
     }
 
