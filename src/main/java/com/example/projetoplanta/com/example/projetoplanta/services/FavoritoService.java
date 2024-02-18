@@ -2,6 +2,8 @@ package com.example.projetoplanta.com.example.projetoplanta.services;
 
 
 import java.util.List;
+import java.util.Optional;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.example.projetoplanta.com.example.projetoplanta.modules.FavoritoModel;
 import com.example.projetoplanta.com.example.projetoplanta.modules.PlantaModel;
 import com.example.projetoplanta.com.example.projetoplanta.modules.UsuarioModel;
+import com.example.projetoplanta.com.example.projetoplanta.modules.PrimaryKey.FavoritoPK;
 import com.example.projetoplanta.com.example.projetoplanta.repositories.FavoritoRepository;
 import com.example.projetoplanta.com.example.projetoplanta.services.exceptions.DadoNaoEncontradoException;
 
@@ -24,8 +27,25 @@ public class FavoritoService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List listarFavoritos(UsuarioModel fkUsuario) {
-        List listaFavoritos = entityManager.createQuery("SELECT * FROM favorito WHERE fkUsuario = :fkusuario")
+
+    public List<FavoritoModel> listarFavoritos() {
+        List<FavoritoModel> listaFavoritos = favoritoRepository.findAll();
+        if (listaFavoritos.isEmpty()) {
+            throw new DadoNaoEncontradoException("Planta não tem favoritos.");
+        }
+        return listaFavoritos;
+    }
+
+    // MUDAR A QUERY PARA RETORNAR AS PLANTAS COM MAIS FAVORITOS
+    public Optional<FavoritoModel> listarPlantasFavoritas(PlantaModel plantaModel) {
+        var favoritoPK = new FavoritoPK();
+        favoritoPK.setPlanta(plantaModel.getId());
+        // .getResultList();
+            throw new DadoNaoEncontradoException("Planta não tem favoritos.");
+    }
+
+    public List listarUsuariosFavoritos(UsuarioModel fkUsuario) {
+        List listaFavoritos = entityManager.createQuery("SELECT fkUsuario, fkPlanta, data FROM FavoritoModel WHERE fkUsuario = :fkusuario")
         .setParameter("fkusuario", fkUsuario)
         .getResultList();
         if (listaFavoritos.isEmpty()) {
@@ -34,38 +54,36 @@ public class FavoritoService {
         return listaFavoritos;
     }
 
-    public void favoritarPlanta(UsuarioModel fkUsuario, PlantaModel fkPlanta) {
+    public String des_favoritarPlanta(UsuarioModel fkUsuario, PlantaModel fkPlanta) {
+        var favoritoPK = new FavoritoPK();
+        favoritoPK.setPlanta(fkPlanta.getId());
+        favoritoPK.setUsuario(fkUsuario.getId());
+        var favorito = new FavoritoModel();
+        favorito.setId(favoritoPK);
+        favorito.setFkPlanta(fkPlanta);
+        favorito.setFkUsuario(fkUsuario);
         try {
-            Integer id = (Integer) entityManager.createQuery("SELECT id FROM FavoritoModel WHERE fkUsuario = :fkusuario AND fkPlanta = :fkplanta")
+            List selectFavorito = entityManager.createQuery("SELECT fkUsuario, fkPlanta FROM FavoritoModel WHERE fkUsuario = :fkusuario AND fkPlanta = :fkplanta")
             .setParameter("fkusuario", fkUsuario)
             .setParameter("fkplanta", fkPlanta)
-            .getSingleResult();
-            if (id > 0) { 
-                var favorito = new FavoritoModel();
-                favorito.setFkPlanta(fkPlanta);
-                favorito.setFkUsuario(fkUsuario);
+            .getResultList();
+            if (selectFavorito.size() == 0) {
                 try {
                     favoritoRepository.save(favorito);
+                    return "FAVORITADA";
                 } catch (Exception e) {
                     throw new RuntimeException("Erro ao favoritar a planta: "+ e.getMessage());
                 }
-            } 
+            } else {
+                try {
+                    favoritoRepository.delete(favorito);
+                    return "DESFAVORITADA";
+                } catch (Exception e) {
+                    throw new RuntimeException("Erro ao desfavoritar a planta: "+ e.getMessage());
+                } 
+            }
         } catch (Exception e) {
-            throw new RuntimeException("Erro com a query: "+ e.getMessage());
-            
+            throw new DadoNaoEncontradoException("Nenhum favorito encontrado do usuario: "+fkUsuario+" com a planta: "+fkPlanta+" \nERRO: "+e);
         }
     }
-
-   public void apagarPlantaFavorita(UsuarioModel fkUsuario, PlantaModel fkPlanta) {
-       try {
-            Integer id = (Integer) entityManager.createQuery("SELECT id FROM favorito WHERE fkUsuario = :fkusuario AND fkPlanta = :fkplanta")
-            .setParameter("fkusuario", fkUsuario)
-            .setParameter("fkplanta", fkPlanta)
-            .getSingleResult();
-            if (id > 0) favoritoRepository.deleteById(id);
-            else if (id < 0) throw new DadoNaoEncontradoException("Planta: "+fkPlanta+" não favoritada pelo usuário: "+fkUsuario);
-        } catch (Exception e) {
-            throw new RuntimeException("Ero ao deletar o favorito com o id: "+e.getMessage());
-        }
-   }
 }

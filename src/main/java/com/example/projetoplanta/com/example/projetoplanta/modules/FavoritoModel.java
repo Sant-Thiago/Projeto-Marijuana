@@ -28,18 +28,18 @@ import lombok.ToString;
 @Entity
 @Table(name = "favorito")
 public class FavoritoModel extends RepresentationModel<FavoritoModel> implements Serializable {
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 2l;
     
     @EmbeddedId
     private FavoritoPK id;
 
     @ManyToOne
-    @MapsId("usuarioId")
+    @MapsId("usuario")
     @JoinColumn(name = "fkUsuario")
     private UsuarioModel fkUsuario;
 
     @ManyToOne
-    @MapsId("plantaId")
+    @MapsId("planta")
     @JoinColumn(name = "fkPlanta")
     private PlantaModel fkPlanta;
     private Timestamp data;

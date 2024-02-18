@@ -18,6 +18,7 @@ import com.example.projetoplanta.com.example.projetoplanta.modules.FavoritoModel
 import com.example.projetoplanta.com.example.projetoplanta.modules.PlantaModel;
 import com.example.projetoplanta.com.example.projetoplanta.modules.UsuarioModel;
 import com.example.projetoplanta.com.example.projetoplanta.services.FavoritoService;
+import com.example.projetoplanta.com.example.projetoplanta.services.exceptions.DadoNaoEncontradoException;
 
 
 @RestController
@@ -26,22 +27,53 @@ public class FavoritoController {
     @Autowired
     FavoritoService favoritoService;
 
-    @PostMapping("/favoritar/planta/{fkusuario}")
-    public ResponseEntity<Object> favoritarPlanta(@PathVariable(name = "fkusuario") UsuarioModel fkusuario, @RequestParam("fkPlanta") PlantaModel fkplanta) {
+    @PostMapping("/des_favoritar/planta")
+    public ResponseEntity<Object> des_favoritarPlanta(@RequestParam("fkUsuario") UsuarioModel fkusuario, @RequestParam("fkPlanta") PlantaModel fkplanta) {
         try {
-            favoritoService.favoritarPlanta(fkusuario, fkplanta);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Planta favoritada com sucesso.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao favoritar planta.");
+            String mensagem = favoritoService.des_favoritarPlanta(fkusuario, fkplanta);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Planta "+mensagem+" com sucesso.");
+        } catch (DadoNaoEncontradoException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMensagem());
         }
     }
 
     @GetMapping("/listar/favoritos/{fkusuario}")
-    public ResponseEntity<List<FavoritoModel>> listarFavoritos(@PathVariable(name = "fkusuario") UsuarioModel fkUsuario) {
-        List<FavoritoModel> listaFavoritos = favoritoService.listarFavoritos(fkUsuario);
-        for (FavoritoModel favorito : listaFavoritos) {
-            favorito.add(linkTo(methodOn(FavoritoController.class).favoritarPlanta(fkUsuario, null)).withRel("favoritarPlanta"));
+    public ResponseEntity<Object> listarUsuariosFavoritos(@PathVariable(name = "fkusuario") UsuarioModel fkUsuario) {
+        try {
+            List<FavoritoModel> listaFavoritos = favoritoService.listarUsuariosFavoritos(fkUsuario);
+            for (FavoritoModel favorito : listaFavoritos) {
+                favorito.add(linkTo(methodOn(FavoritoController.class).des_favoritarPlanta(fkUsuario, null)).withRel("favoritarPlanta"));
+                favorito.add(linkTo(methodOn(FavoritoController.class).listarFavoritos()).withRel("listarFavoritos"));
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(listaFavoritos);    
+        } catch (DadoNaoEncontradoException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMensagem());
         }
-        return ResponseEntity.status(HttpStatus.OK).body(listaFavoritos);
+    }
+
+    @GetMapping("/plantas/favoritas/{fkplanta}")
+    public ResponseEntity<Object> listarPlantasFavoritos(@PathVariable(name = "fkplanta") PlantaModel fkPlanta) {
+        try {
+            var listaFavoritos = favoritoService.listarPlantasFavoritas(fkPlanta);
+            return ResponseEntity.status(HttpStatus.OK).body(listaFavoritos);    
+        } catch (DadoNaoEncontradoException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMensagem());
+        }
+    }
+    
+    @GetMapping("/listar/favoritos")
+    public ResponseEntity<Object> listarFavoritos() {
+        try {
+            List<FavoritoModel> listaFavoritos = favoritoService.listarFavoritos();
+            for (FavoritoModel favorito : listaFavoritos) {
+                favorito.add(linkTo(methodOn(FavoritoController.class).des_favoritarPlanta(null, null)).withRel("favoritarPlanta"));
+                favorito.add(linkTo(methodOn(FavoritoController.class).listarUsuariosFavoritos(null)).withRel("listarUsuariosFavoritos"));
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(listaFavoritos);
+        } catch (DadoNaoEncontradoException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMensagem());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e);
+        }
     }
 }

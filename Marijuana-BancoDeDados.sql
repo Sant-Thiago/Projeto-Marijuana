@@ -51,6 +51,22 @@ CREATE TABLE favorito (
     data TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+DELIMITER $$
+
+CREATE TRIGGER before_insert_favorito
+BEFORE INSERT ON favorito
+FOR EACH ROW
+BEGIN
+  IF NEW.data IS NULL THEN
+    SET NEW.data = CURRENT_TIMESTAMP;
+  END IF;
+END;
+
+$$
+DELIMITER ;
+
+select * from favorito;
+
 CREATE TABLE comentario (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     mensagem TEXT NOT NULL,
