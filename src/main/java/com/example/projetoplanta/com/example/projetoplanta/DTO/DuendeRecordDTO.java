@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 public record DuendeRecordDTO (
     String fkUsuario,
     @NotBlank
-    String numeroNascionalId,
+    String numeroNacionalId,
     Timestamp dtIntegracao) {
     
 }
