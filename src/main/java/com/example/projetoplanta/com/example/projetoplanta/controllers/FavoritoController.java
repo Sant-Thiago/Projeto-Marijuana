@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.projetoplanta.com.example.projetoplanta.exceptions.NotFoundException;
 import com.example.projetoplanta.com.example.projetoplanta.modules.FavoritoModel;
 import com.example.projetoplanta.com.example.projetoplanta.modules.PlantaModel;
 import com.example.projetoplanta.com.example.projetoplanta.modules.UsuarioModel;
 import com.example.projetoplanta.com.example.projetoplanta.services.FavoritoService;
-import com.example.projetoplanta.com.example.projetoplanta.services.exceptions.DadoNaoEncontradoException;
 
 
 @RestController
@@ -32,7 +32,7 @@ public class FavoritoController {
         try {
             String mensagem = favoritoService.des_favoritarPlanta(fkusuario, fkplanta);
             return ResponseEntity.status(HttpStatus.CREATED).body("Planta "+mensagem+" com sucesso.");
-        } catch (DadoNaoEncontradoException e) {
+        } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMensagem());
         }
     }
@@ -46,7 +46,7 @@ public class FavoritoController {
                 favorito.add(linkTo(methodOn(FavoritoController.class).listarFavoritos()).withRel("listarFavoritos"));
             }
             return ResponseEntity.status(HttpStatus.OK).body(listaFavoritos);    
-        } catch (DadoNaoEncontradoException e) {
+        } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMensagem());
         }
     }
@@ -56,7 +56,7 @@ public class FavoritoController {
         try {
             var listaFavoritos = favoritoService.listarPlantasFavoritas(fkPlanta);
             return ResponseEntity.status(HttpStatus.OK).body(listaFavoritos);    
-        } catch (DadoNaoEncontradoException e) {
+        } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMensagem());
         }
     }
@@ -70,7 +70,7 @@ public class FavoritoController {
                 favorito.add(linkTo(methodOn(FavoritoController.class).listarUsuariosFavoritos(null)).withRel("listarUsuariosFavoritos"));
             }
             return ResponseEntity.status(HttpStatus.OK).body(listaFavoritos);
-        } catch (DadoNaoEncontradoException e) {
+        } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMensagem());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e);

@@ -7,10 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.projetoplanta.com.example.projetoplanta.DTO.UsuarioRecordDTO;
+import com.example.projetoplanta.com.example.projetoplanta.exceptions.NotFoundException;
 import com.example.projetoplanta.com.example.projetoplanta.modules.SolicitacaoModel;
 import com.example.projetoplanta.com.example.projetoplanta.modules.UsuarioModel;
 import com.example.projetoplanta.com.example.projetoplanta.repositories.SolicitacaoRepository;
-import com.example.projetoplanta.com.example.projetoplanta.services.exceptions.DadoNaoEncontradoException;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -27,7 +27,7 @@ public class SolicitacaoService {
     public List<SolicitacaoModel> listarSolicitacoes() {
         var listaSolicitacao = solicitacaoRepository.findAll();
         if (listaSolicitacao.isEmpty()) {
-            throw new DadoNaoEncontradoException("Nenhuma solicitação feita até o momento.");
+            throw new NotFoundException("Nenhuma solicitação feita até o momento.");
         }
         return listaSolicitacao;
     }

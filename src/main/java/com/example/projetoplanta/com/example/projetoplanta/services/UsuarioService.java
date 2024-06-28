@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.projetoplanta.com.example.projetoplanta.DTO.UsuarioRecordDTO;
+import com.example.projetoplanta.com.example.projetoplanta.exceptions.NotFoundException;
 import com.example.projetoplanta.com.example.projetoplanta.modules.UsuarioModel;
 import com.example.projetoplanta.com.example.projetoplanta.repositories.UsuarioRepository;
-import com.example.projetoplanta.com.example.projetoplanta.services.exceptions.DadoNaoEncontradoException;
 
 @Service
 public class UsuarioService {
@@ -32,7 +32,7 @@ public class UsuarioService {
     public List<UsuarioModel> listarTodosUsuarios() {
         List<UsuarioModel> listaTodosUsuarios = usuarioRepository.findAll();
         if (listaTodosUsuarios.isEmpty()) {
-            throw new DadoNaoEncontradoException("Usuários não encontrado.");
+            throw new NotFoundException("Usuários não encontrado.");
         }
         return listaTodosUsuarios;
     }
@@ -40,7 +40,7 @@ public class UsuarioService {
     public Optional<UsuarioModel> listarUsuario(String id) {
         Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
         if (usuario.isEmpty()) {
-            throw new DadoNaoEncontradoException("Usuário com o id: "+id+" não encontrado.");
+            throw new NotFoundException("Usuário com o id: "+id+" não encontrado.");
         }
         return usuario;
     }
@@ -48,7 +48,7 @@ public class UsuarioService {
     public void modificarUsuario(String id, UsuarioRecordDTO usuarioRecordDTO) {
         Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
             if (usuario.isEmpty()) {
-                throw new DadoNaoEncontradoException("Usuário com o id: "+id+" não encontrado.");
+                throw new NotFoundException("Usuário com o id: "+id+" não encontrado.");
             }
         var solicitacao = new SolicitacaoService();
         var usuarioModel = usuario.get();
@@ -67,7 +67,7 @@ public class UsuarioService {
     public String statusUsuario(String id) {
         Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
         if (usuario.isEmpty()) {
-            throw new DadoNaoEncontradoException("Usuário com o id: "+id+" não encontrado.");
+            throw new NotFoundException("Usuário com o id: "+id+" não encontrado.");
         }
         var usuarioModel = usuario.get();
         if (usuarioModel.getStatus().equals("DESATIVADO")) usuarioModel.setStatus("ATIVO");
@@ -83,7 +83,7 @@ public class UsuarioService {
     public void deletarUsuario(String id) {
         Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
         if (usuario.isEmpty()) {
-            throw new DadoNaoEncontradoException("Usuário com o id: "+id+" não encontrado.");
+            throw new NotFoundException("Usuário com o id: "+id+" não encontrado.");
         }
         try {
             usuarioRepository.delete(usuario.get());

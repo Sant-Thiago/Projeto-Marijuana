@@ -8,12 +8,12 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.projetoplanta.com.example.projetoplanta.exceptions.NotFoundException;
 import com.example.projetoplanta.com.example.projetoplanta.modules.FavoritoModel;
 import com.example.projetoplanta.com.example.projetoplanta.modules.PlantaModel;
 import com.example.projetoplanta.com.example.projetoplanta.modules.UsuarioModel;
 import com.example.projetoplanta.com.example.projetoplanta.modules.PrimaryKey.FavoritoPK;
 import com.example.projetoplanta.com.example.projetoplanta.repositories.FavoritoRepository;
-import com.example.projetoplanta.com.example.projetoplanta.services.exceptions.DadoNaoEncontradoException;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -31,7 +31,7 @@ public class FavoritoService {
     public List<FavoritoModel> listarFavoritos() {
         List<FavoritoModel> listaFavoritos = favoritoRepository.findAll();
         if (listaFavoritos.isEmpty()) {
-            throw new DadoNaoEncontradoException("Planta não tem favoritos.");
+            throw new NotFoundException("Planta não tem favoritos.");
         }
         return listaFavoritos;
     }
@@ -41,7 +41,7 @@ public class FavoritoService {
         var favoritoPK = new FavoritoPK();
         favoritoPK.setPlanta(plantaModel.getId());
         // .getResultList();
-            throw new DadoNaoEncontradoException("Planta não tem favoritos.");
+            throw new NotFoundException("Planta não tem favoritos.");
     }
 
     public List listarUsuariosFavoritos(UsuarioModel fkUsuario) {
@@ -49,7 +49,7 @@ public class FavoritoService {
         .setParameter("fkusuario", fkUsuario)
         .getResultList();
         if (listaFavoritos.isEmpty()) {
-            throw new DadoNaoEncontradoException("Nenhuma lista ligada a esse usuário.");
+            throw new NotFoundException("Nenhuma lista ligada a esse usuário.");
         }
         return listaFavoritos;
     }
@@ -83,7 +83,7 @@ public class FavoritoService {
                 } 
             }
         } catch (Exception e) {
-            throw new DadoNaoEncontradoException("Nenhum favorito encontrado do usuario: "+fkUsuario+" com a planta: "+fkPlanta+" \nERRO: "+e);
+            throw new NotFoundException("Nenhum favorito encontrado do usuario: "+fkUsuario+" com a planta: "+fkPlanta+" \nERRO: "+e);
         }
     }
 }

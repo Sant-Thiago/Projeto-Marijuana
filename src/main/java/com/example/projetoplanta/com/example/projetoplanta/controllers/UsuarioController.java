@@ -17,12 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.projetoplanta.com.example.projetoplanta.DTO.UsuarioRecordDTO;
 import com.example.projetoplanta.com.example.projetoplanta.modules.UsuarioModel;
 import com.example.projetoplanta.com.example.projetoplanta.services.UsuarioService;
-import com.example.projetoplanta.com.example.projetoplanta.services.exceptions.DadoNaoEncontradoException;
-
-import jakarta.validation.Valid;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import com.example.projetoplanta.com.example.projetoplanta.services.exceptions.NotFoundException;
+import com.example.projetoplanta.com.example.projetoplanta.services.linkTo.UsuarioLinkTo;
+import com.example.projetoplanta.com.example.projetoplanta.utils.Valid;
 
 @RestController
 public class UsuarioController {
@@ -32,6 +29,10 @@ public class UsuarioController {
 
     @PostMapping("/cadastrar/usuario")
     public ResponseEntity<Object> cadastrarUsuario(@RequestBody @Valid UsuarioRecordDTO usuario) {
+
+        if (!Valid.isEmail(usuario.email())) {
+            throw ValidExe
+        }
         usuarioService.cadastrarUsuario(usuario);
         return ResponseEntity.status(HttpStatus.CREATED).body("Usuário criado com sucesso.");
     }
@@ -40,11 +41,8 @@ public class UsuarioController {
     public ResponseEntity<List<UsuarioModel>> listarTodosUsuarios() {
         List<UsuarioModel> listaTodosUsuarios = usuarioService.listarTodosUsuarios();
         for (UsuarioModel usuario : listaTodosUsuarios) {
-            String id = usuario.getId();
-            usuario.add(linkTo(methodOn(UsuarioController.class).listarUsuario(id)).withRel("listar"));
-            usuario.add(linkTo(methodOn(UsuarioController.class).modificarUsuario(id, null)).withRel("modificarUsuário"));
-            usuario.add(linkTo(methodOn(UsuarioController.class).statusUsuario(id)).withRel("ativar"));
-            usuario.add(linkTo(methodOn(UsuarioController.class).deletarUsuario(id)).withRel("deletar"));
+            UsuarioLinkTo usuarioLinkTo = new UsuarioLinkTo(usuario);
+            usuarioLinkTo.methodsOn();
         }
         return ResponseEntity.status(HttpStatus.OK).body(listaTodosUsuarios);
     }
@@ -52,10 +50,10 @@ public class UsuarioController {
     @GetMapping("/listar/usuario/{id}")
     public ResponseEntity<Object> listarUsuario(@PathVariable(value = "id") String id) {
         Optional<UsuarioModel> usuario = usuarioService.listarUsuario(id);
-        usuario.get().add(linkTo(methodOn(UsuarioController.class).listarTodosUsuarios()).withRel("listarTodos"));
-        usuario.get().add(linkTo(methodOn(UsuarioController.class).modificarUsuario(id, null)).withRel("modificarUsuário"));
-        usuario.get().add(linkTo(methodOn(UsuarioController.class).statusUsuario(id)).withRel("ativar"));
-        usuario.get().add(linkTo(methodOn(UsuarioController.class).deletarUsuario(id)).withRel("deletar"));
+
+        UsuarioLinkTo usuarioLinkTo = new UsuarioLinkTo(usuario.get());
+        usuarioLinkTo.methodsOn();
+
         return ResponseEntity.status(HttpStatus.OK).body(usuario.get());
     }
 
@@ -64,7 +62,7 @@ public class UsuarioController {
         try {
             usuarioService.modificarUsuario(id, usuarioDTO);
             return ResponseEntity.status(HttpStatus.OK).body("Usuário modificado com sucesso.");
-        } catch (DadoNaoEncontradoException e) {
+        } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMensagem());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao modificar usuário.");
@@ -76,7 +74,7 @@ public class UsuarioController {
         try {
             String status = usuarioService.statusUsuario(id);
             return ResponseEntity.status(HttpStatus.OK).body("Status do usuário modificado com sucesso: "+status);  
-        } catch (DadoNaoEncontradoException e) {
+        } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMensagem());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao modificar usuário.");
@@ -88,12 +86,11 @@ public class UsuarioController {
         try {
             usuarioService.deletarUsuario(id);
             return ResponseEntity.status(HttpStatus.OK).body("Usuário deletado com sucesso.");
-        } catch (DadoNaoEncontradoException e)  {
+        } catch (NotFoundException e)  {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMensagem());
         } catch (Exception e ) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao modificar usuário.");
         }
-        
-        
     }
+
 }
