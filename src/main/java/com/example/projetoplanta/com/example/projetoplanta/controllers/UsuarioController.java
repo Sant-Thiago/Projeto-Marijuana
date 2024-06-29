@@ -10,7 +10,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,17 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.projetoplanta.com.example.projetoplanta.DTO.UsuarioRecordDTO;
 import com.example.projetoplanta.com.example.projetoplanta.modules.UsuarioModel;
 import com.example.projetoplanta.com.example.projetoplanta.repositories.UsuarioRepository;
-import com.example.projetoplanta.com.example.projetoplanta.services.UsuarioService;
 import com.example.projetoplanta.com.example.projetoplanta.exceptions.NotFoundException;
-import com.example.projetoplanta.com.example.projetoplanta.services.linkTo.UsuarioLinkTo;
 
 import jakarta.validation.Valid;
 
 @RestController
 public class UsuarioController {
-
-    @Autowired
-    UsuarioService usuarioService;
 
     @Autowired
     UsuarioRepository usuarioRepository;
@@ -50,7 +44,7 @@ public class UsuarioController {
             usuarioRepository.save(usuarioModel);
             response = ResponseEntity.status(201).body("Usuário criado com sucesso.");
         } catch (Exception e) {
-            response = ResponseEntity.status(400).body("Falha ao criar o usuário!");
+            response = ResponseEntity.status(500).body("Falha ao criar o usuário!");
             throw new RuntimeException("Erro ao criar usuário:: "+ e.getMessage());
         }
         return response;
@@ -62,7 +56,7 @@ public class UsuarioController {
         try {
             List<UsuarioModel> listaTodosUsuarios = usuarioRepository.findAll();
             if (listaTodosUsuarios.isEmpty()) {
-                throw new NotFoundException("Usuários não encontrados.");
+                throw new NotFoundException("Usuários não encontrados!");
             }
             for (UsuarioModel usuario : listaTodosUsuarios) {
                 methodsOn(usuario);
@@ -83,37 +77,30 @@ public class UsuarioController {
         try {
             Optional<UsuarioModel> optionaUsuario = usuarioRepository.findById(id);
             if (optionaUsuario.isEmpty()) {
-                throw new NotFoundException("Usuário com o id:: "+id+" não encontrado");
+                throw new NotFoundException("Usuário com o id:: "+id+" não encontrado!");
             }
             UsuarioModel usuario = optionaUsuario.get();
-            
-            UsuarioLinkTo usuarioLinkTo = new UsuarioLinkTo(usuario);
-            usuarioLinkTo.methodsOn();
+            methodsOn(usuario);
             response = ResponseEntity.status(200).body(usuario);
         } catch (NotFoundException e) {
             response = ResponseEntity.status(404).body(e.getMensagem());
         } catch (Exception e) {
-            response = ResponseEntity.status(400).body(null);
-            throw new RuntimeException("Erro ao selecionar o usuário com o id:: "+id+": "+ e.getMessage());
+            response = ResponseEntity.status(400).body("Erro ao selecionar o usuário com o id:: "+id);
+            throw new RuntimeException("Erro ao selecionar o usuário com o id:: "+id+":: "+ e.getMessage());
         }
         return response;
     }
 
     @PutMapping("/modificar/usuario/{id}")
-    public ResponseEntity<Object> modificarUsuario(@PathVariable(value = "id") String id, @RequestBody @Valid UsuarioRecordDTO usuarioDTO) {
+    public ResponseEntity<Object> modificar(@PathVariable(value = "id") String id, @RequestBody @Valid UsuarioRecordDTO usuarioDTO) {
         ResponseEntity<Object> response;
         try {
             Optional<UsuarioModel> optionalUsuario = usuarioRepository.findById(id);
             if (optionalUsuario.isEmpty()) {
-                throw new NotFoundException("Usuário com o id:: "+id+" não encontrado.");
+                throw new NotFoundException("Usuário com o id:: "+id+" não encontrado!");
             }
-            UsuarioModel usuario = optionalUsuario.get()
+            UsuarioModel usuario = optionalUsuario.get();
             BeanUtils.copyProperties(usuarioDTO, usuario);
-            
-            if (usuario.getFoto() != null) {
-                var solicitacaoController = new SolicitacaoController();
-                solicitacaoController.solicitarImagem(usuario, id);
-            }
             usuarioRepository.save(usuario);
             response =  ResponseEntity.status(200).body("Usuário modificado com sucesso.");
         } catch (NotFoundException e) {
@@ -126,18 +113,18 @@ public class UsuarioController {
     }
 
     @PutMapping("/status/usuario/{id}")
-    public ResponseEntity<Object> status(@PathVariable(value = "id") String id) {
+    public ResponseEntity<Object> modificarStatus(@PathVariable(value = "id") String id) {
         ResponseEntity<Object> response;
         try {
             Optional<UsuarioModel> optionalUsuario = usuarioRepository.findById(id);
             if (optionalUsuario.isEmpty()) {
-                throw new NotFoundException("Usuário com o id:: "+id+" não encontrado.");
+                throw new NotFoundException("Usuário com o id:: "+id+" não encontrado!");
             }
             UsuarioModel usuario = optionalUsuario.get();
-            if (!usuario.getAtivo()) {
-                usuario.setAtivo(true);
-            } else {
+            if (usuario.getAtivo()) {
                 usuario.setAtivo(false);
+            } else {
+                usuario.setAtivo(true);
             }
             usuarioRepository.save(usuario);
             response = ResponseEntity.status(200).body("Status do usuário modificado com sucesso:: "+ usuario.getAtivo());  
@@ -156,7 +143,7 @@ public class UsuarioController {
         try {
             Optional<UsuarioModel> optionalUsuario = usuarioRepository.findById(id);
             if (optionalUsuario.isEmpty()) {
-                throw new NotFoundException("Usuário com o id:: "+id+" não encontrado.");
+                throw new NotFoundException("Usuário com o id:: "+id+" não encontrado!");
             }
             response = ResponseEntity.status(200).body("Usuário deletado com sucesso.");
         } catch (NotFoundException e)  {
@@ -170,11 +157,11 @@ public class UsuarioController {
 
 
     private void methodsOn(UsuarioModel usuario) {
-        usuario.add(linkTo(methodOn(UsuarioController.class).deletarUsuario(usuario.getId())).withRel("deletar"));
-        usuario.add(linkTo(methodOn(UsuarioController.class).listarTodosUsuarios()).withRel("listarTodos"));
-        usuario.add(linkTo(methodOn(UsuarioController.class).listarUsuario(usuario.getId())).withRel("listar"));
-        usuario.add(linkTo(methodOn(UsuarioController.class).modificarUsuario(usuario.getId(), null)).withRel("modificar"));
-        usuario.add(linkTo(methodOn(UsuarioController.class).statusUsuario(usuario.getId())).withRel("ativar"));
+        usuario.add(linkTo(methodOn(UsuarioController.class).deletar(usuario.getId())).withRel("deletar"));
+        usuario.add(linkTo(methodOn(UsuarioController.class).listarTodos()).withRel("listarTodos"));
+        usuario.add(linkTo(methodOn(UsuarioController.class).listar(usuario.getId())).withRel("listar"));
+        usuario.add(linkTo(methodOn(UsuarioController.class).modificar(usuario.getId(), null)).withRel("modificar"));
+        usuario.add(linkTo(methodOn(UsuarioController.class).modificarStatus(usuario.getId())).withRel("ativar"));
     }
     
     private Date formatarData(Date data) {

@@ -84,12 +84,12 @@ CREATE TABLE solicitacao (
     solicitante VARCHAR(255) NOT NULL,
 		CONSTRAINT fkSolicitanteSol FOREIGN KEY (solicitante) REFERENCES usuario(id),
     tipo VARCHAR(8) NOT NULL,
-		CONSTRAINT ckTipo CHECK (tipo IN ("FOTO", "DUENDE", "EXCLUSÂO")),
+		CONSTRAINT ckTipo CHECK (tipo IN ("FOTO", "DUENDE")),
 	motivo VARCHAR(255),
     fotoUsuario VARCHAR(100),
     dtArmazenamento TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     status VARCHAR(12) NOT NULL,
-		CONSTRAINT ckStatusSol CHECK (status IN ("PENDENTE", "NÃO PENDENTE"))
+		CONSTRAINT ckStatusSol CHECK (status IN ("PENDENTE", "FINALIZADO"))
 );
 
 DELIMITER $$

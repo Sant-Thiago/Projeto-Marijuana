@@ -6,9 +6,8 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum tipoSolicitacao {
-    DUENDE("Duende"),
-    FOTO("Foto"),
-    EXCLUSAO("Exclusão");
+    DUENDE("DUENDE"),
+    FOTO("FOTO");
 
     private String valor;
 }
