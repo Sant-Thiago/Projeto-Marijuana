@@ -1,6 +1,7 @@
 package com.example.projetoplanta.com.example.projetoplanta.modules;
 
 import java.io.Serializable;
+import java.sql.Date;
 
 import org.springframework.hateoas.RepresentationModel;
 
@@ -34,10 +35,10 @@ public class UsuarioModel extends RepresentationModel<UsuarioModel> implements S
     private String email;
     private String senha;
     private String nome;
-    private byte[] foto;
+    private String foto;
     private String pais;
-    private String dtNascimento;
+    private Date dtNascimento;
     private String genero;
-    private String status;
+    private Boolean ativo;
     
 }

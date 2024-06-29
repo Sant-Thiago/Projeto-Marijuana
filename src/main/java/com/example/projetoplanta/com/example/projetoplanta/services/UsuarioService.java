@@ -1,10 +1,13 @@
 package com.example.projetoplanta.com.example.projetoplanta.services;
 
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.projetoplanta.com.example.projetoplanta.DTO.UsuarioRecordDTO;
@@ -18,24 +21,8 @@ public class UsuarioService {
     @Autowired
     UsuarioRepository usuarioRepository;
 
-    public void cadastrarUsuario(UsuarioRecordDTO usuarioRecordDTO) {
-        var usuarioModel = new UsuarioModel();
-        BeanUtils.copyProperties(usuarioRecordDTO, usuarioModel);
-        usuarioModel.setStatus("ATIVO");
-        try {
-            usuarioRepository.save(usuarioModel);
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao criar usuário: "+ e.getMessage());
-        }
-    }
 
-    public List<UsuarioModel> listarTodosUsuarios() {
-        List<UsuarioModel> listaTodosUsuarios = usuarioRepository.findAll();
-        if (listaTodosUsuarios.isEmpty()) {
-            throw new NotFoundException("Usuários não encontrado.");
-        }
-        return listaTodosUsuarios;
-    }
+
 
     public Optional<UsuarioModel> listarUsuario(String id) {
         Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
@@ -64,20 +51,20 @@ public class UsuarioService {
         }
     }
 
-    public String statusUsuario(String id) {
+    public Boolean ativoUsuario(String id) {
         Optional<UsuarioModel> usuario = usuarioRepository.findById(id);
         if (usuario.isEmpty()) {
             throw new NotFoundException("Usuário com o id: "+id+" não encontrado.");
         }
         var usuarioModel = usuario.get();
-        if (usuarioModel.getStatus().equals("DESATIVADO")) usuarioModel.setStatus("ATIVO");
-        else usuarioModel.setStatus("DESATIVADO");
+        if (!usuarioModel.getAtivo()) usuarioModel.setAtivo(true);
+        else usuarioModel.setAtivo(false);
         try {
             usuarioRepository.save(usuarioModel);
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao atualizar o status do usuário: "+ e.getMessage());
+            throw new RuntimeException("Erro ao atualizar o status de ativo do usuário: "+ e.getMessage());
         }
-        return usuarioModel.getStatus();
+        return usuarioModel.getAtivo();
     }
 
     public void deletarUsuario(String id) {
@@ -91,4 +78,5 @@ public class UsuarioService {
             throw new RuntimeException("Erro ao deletar usuário: "+ e.getMessage());
         }
     }
+
 }
