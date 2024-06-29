@@ -24,14 +24,6 @@ public class SolicitacaoService {
     @PersistenceContext
     EntityManager entityManager;
 
-    public List<SolicitacaoModel> listarSolicitacoes() {
-        var listaSolicitacao = solicitacaoRepository.findAll();
-        if (listaSolicitacao.isEmpty()) {
-            throw new NotFoundException("Nenhuma solicitação feita até o momento.");
-        }
-        return listaSolicitacao;
-    }
-
     public String solicitarDuende(UsuarioModel solicitante, String motivo) {
         try {
             var status = entityManager.createQuery("SELECT status FROM SolicitacaoModel WHERE solicitante = :fkusuario AND tipo = :tipo")

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.projetoplanta.com.example.projetoplanta.exceptions.NotFoundException;
 import com.example.projetoplanta.com.example.projetoplanta.modules.SolicitacaoModel;
 import com.example.projetoplanta.com.example.projetoplanta.modules.UsuarioModel;
+import com.example.projetoplanta.com.example.projetoplanta.repositories.SolicitacaoRepository;
 import com.example.projetoplanta.com.example.projetoplanta.services.SolicitacaoService;
 
 
@@ -25,32 +26,47 @@ import com.example.projetoplanta.com.example.projetoplanta.services.SolicitacaoS
 public class SolicitacaoController {
     
     @Autowired
-    SolicitacaoService solicitacaoService;
+    SolicitacaoRepository solicitacaoRepository;
 
     SolicitacaoModel solicitacaoModel = new SolicitacaoModel();
 
     @GetMapping("/listar/solicitacoes")
-    public ResponseEntity<Object> listarSolicitacoes() {
+    public ResponseEntity<Object> listarTodos() {
+        ResponseEntity<Object> response;
         try {
-            List<SolicitacaoModel> listaSolicitacoes = solicitacaoService.listarSolicitacoes();
-            for (SolicitacaoModel solicitacaoModel : listaSolicitacoes) {
-                solicitacaoModel.add(linkTo(methodOn(SolicitacaoController.class).solicitarDuende(null, null)).withRel("solicitarDuende"));
+            List<SolicitacaoModel> listaSolicitacoes = solicitacaoRepository.findAll();
+            if (listaSolicitacoes.isEmpty()) {
+                throw new NotFoundException("Nenhuma solicitação feita até o momento.");
             }
-            return ResponseEntity.status(HttpStatus.OK).body(listaSolicitacoes);
+            for (SolicitacaoModel solicitacao : listaSolicitacoes) {
+                methodsOn(solicitacao);
+            }
+            response = ResponseEntity.status(200).body(listaSolicitacoes);
         } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMensagem());
+            response = ResponseEntity.status(404).body(e.getMensagem());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao listar as solicitações.");
+            response = ResponseEntity.status(500).body("Erro ao listar todas solicitações.");
+            throw new RuntimeException("Erro ao listar todas solicitações:: "+ e.getMessage());
         }
+        return response;
     }
 
     @PostMapping("/solicitar/duende/{solicitante}")
     public ResponseEntity<Object> solicitarDuende(@PathVariable(name = "solicitante") UsuarioModel solicitante, @RequestParam("motivo") String motivo) {
         try {
+            List<SolicitacaoModel> solicitacoes = solicitacaoRepository.findBySolicitanteAndTipo(solicitante, "DUENDE"); 
             String mensagem = solicitacaoService.solicitarDuende(solicitante, motivo);
             return ResponseEntity.status(HttpStatus.CREATED).body(mensagem);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
+    }
+
+    private void methodsOn(SolicitacaoModel solicitacao) {
+        usuario.add(linkTo(methodOn(UsuarioController.class).deletarUsuario(usuario.getId())).withRel("deletar"));
+        solicitacaoModel.add(linkTo(methodOn(SolicitacaoController.class).solicitarDuende(null, null)).withRel("solicitarDuende"));
+        usuario.add(linkTo(methodOn(UsuarioController.class).listarUsuario(usuario.getId())).withRel("listar"));
+        usuario.add(linkTo(methodOn(UsuarioController.class).modificarUsuario(usuario.getId(), null)).withRel("modificarUsuário"));
+        usuario.add(linkTo(methodOn(UsuarioController.class).statusUsuario(usuario.getId())).withRel("ativar"));
     }
 }

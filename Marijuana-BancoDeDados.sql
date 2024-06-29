@@ -11,7 +11,7 @@ CREATE TABLE usuario (
     email VARCHAR(45) NOT NULL UNIQUE,
     senha VARCHAR(42) NOT NULL,
     nome VARCHAR(45) NOT NULL,
-    foto VARCHAR(100),
+    foto VARCHAR(100) DEFAULT NULL,
     pais CHAR(2),
     dtNascimento DATE,
     genero CHAR(3),
