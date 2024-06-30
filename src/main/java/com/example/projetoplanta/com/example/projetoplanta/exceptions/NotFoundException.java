@@ -29,6 +29,11 @@ public class NotFoundException extends RuntimeException {
         return this;
     }
 
+    public NotFoundException toFavorito(String fkPlanta, String fkUsuario) {
+        setMensagem("Planta com o id:: "+fkPlanta+" do Usuário com o id:: "+fkUsuario+" não foi encontrada na lista de Favoritos!");
+        return this;
+    }
+
     public NotFoundException toSolicitacao(Integer id) {
         setMensagem("Solicitação com o id:: "+id+" não encontrada!");
         return this;

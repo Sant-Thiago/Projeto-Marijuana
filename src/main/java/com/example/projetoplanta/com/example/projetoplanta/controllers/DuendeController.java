@@ -107,8 +107,8 @@ public class DuendeController {
     }
 
     private void methodsOn(DuendeModel duende) {
-        duende.add(linkTo(methodOn(DuendeController.class).deletar(duende.getFkUsuario())).withRel("deletar"));        
-        duende.add(linkTo(methodOn(DuendeController.class).listar(duende.getFkUsuario())).withRel("listar"));
+        duende.add(linkTo(methodOn(DuendeController.class).deletar(duende.getFkUsuario().getId())).withRel("deletar"));        
+        duende.add(linkTo(methodOn(DuendeController.class).listar(duende.getFkUsuario().getId())).withRel("listar"));
         duende.add(linkTo(methodOn(DuendeController.class).listarTodos()).withRel("listarTodos"));
         duende.add(linkTo(methodOn(DuendeController.class).virarDuende(null)).withRel("virarDuende"));
     }
