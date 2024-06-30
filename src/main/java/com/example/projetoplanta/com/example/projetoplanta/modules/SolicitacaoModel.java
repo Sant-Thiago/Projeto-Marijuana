@@ -3,8 +3,10 @@ package com.example.projetoplanta.com.example.projetoplanta.modules;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.hateoas.RepresentationModel;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,12 +34,20 @@ public class SolicitacaoModel extends RepresentationModel<SolicitacaoModel> impl
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    
     @ManyToOne
     @JoinColumn(name = "solicitante")
     private UsuarioModel solicitante;
+    
     private String tipo;
+    
     private String motivo;
+    
     private String fotoUsuario;
+
+    @CreationTimestamp
+    @Column(name = "dtArmazenamento", nullable = false, updatable = false)
     private Timestamp dtArmazenamento;
+
     private String status; 
 }

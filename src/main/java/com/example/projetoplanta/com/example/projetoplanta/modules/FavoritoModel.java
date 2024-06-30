@@ -3,10 +3,12 @@ package com.example.projetoplanta.com.example.projetoplanta.modules;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.hateoas.RepresentationModel;
 
-import com.example.projetoplanta.com.example.projetoplanta.modules.PrimaryKey.FavoritoPK;
+import com.example.projetoplanta.com.example.projetoplanta.modules.PrimaryKey.FavoritoId;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -31,16 +33,19 @@ public class FavoritoModel extends RepresentationModel<FavoritoModel> implements
     private static final long serialVersionUID = 2l;
     
     @EmbeddedId
-    private FavoritoPK id;
+    private FavoritoId id;
 
     @ManyToOne
-    @MapsId("usuario")
+    @MapsId("fkUsuario")
     @JoinColumn(name = "fkUsuario")
     private UsuarioModel fkUsuario;
 
     @ManyToOne
-    @MapsId("planta")
+    @MapsId("fkPlanta")
     @JoinColumn(name = "fkPlanta")
     private PlantaModel fkPlanta;
-    private Timestamp data;
+
+    @CreationTimestamp
+    @Column(name = "dataRegistro", nullable = false, updatable = false)
+    private Timestamp dataRegistro;
 }

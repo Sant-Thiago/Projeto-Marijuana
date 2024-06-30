@@ -11,8 +11,7 @@ import lombok.Setter;
 @Getter
 
 @Embeddable
-public class FavoritoPK implements Serializable {
-    
-    private String usuario;
-    private String planta;
+public class FavoritoId implements Serializable {
+    private String fkUsuario;
+    private String fkPlanta;
 }

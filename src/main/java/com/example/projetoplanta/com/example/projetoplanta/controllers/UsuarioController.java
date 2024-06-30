@@ -44,7 +44,7 @@ public class UsuarioController {
             usuarioRepository.save(usuarioModel);
             response = ResponseEntity.status(201).body("Usuário criado com sucesso.");
         } catch (Exception e) {
-            response = ResponseEntity.status(500).body("Falha ao criar o usuário!");
+            response = ResponseEntity.status(400).body("Erro ao criar o usuário!");
             throw new RuntimeException("Erro ao criar usuário:: "+ e.getMessage());
         }
         return response;
@@ -56,7 +56,7 @@ public class UsuarioController {
         try {
             List<UsuarioModel> listaTodosUsuarios = usuarioRepository.findAll();
             if (listaTodosUsuarios.isEmpty()) {
-                throw new NotFoundException("Usuários não encontrados!");
+                throw new NotFoundException().toUsuario();
             }
             for (UsuarioModel usuario : listaTodosUsuarios) {
                 methodsOn(usuario);
@@ -77,7 +77,7 @@ public class UsuarioController {
         try {
             Optional<UsuarioModel> optionaUsuario = usuarioRepository.findById(id);
             if (optionaUsuario.isEmpty()) {
-                throw new NotFoundException("Usuário com o id:: "+id+" não encontrado!");
+                throw new NotFoundException().toUsuario(id);
             }
             UsuarioModel usuario = optionaUsuario.get();
             methodsOn(usuario);
@@ -97,7 +97,7 @@ public class UsuarioController {
         try {
             Optional<UsuarioModel> optionalUsuario = usuarioRepository.findById(id);
             if (optionalUsuario.isEmpty()) {
-                throw new NotFoundException("Usuário com o id:: "+id+" não encontrado!");
+                throw new NotFoundException().toUsuario(id);
             }
             UsuarioModel usuario = optionalUsuario.get();
             BeanUtils.copyProperties(usuarioDTO, usuario);
@@ -106,7 +106,7 @@ public class UsuarioController {
         } catch (NotFoundException e) {
             response = ResponseEntity.status(404).body(e.getMensagem());
         } catch (Exception e) {
-            response = ResponseEntity.status(500).body("Erro ao modificar usuário.");
+            response = ResponseEntity.status(400).body("Erro ao modificar usuário.");
             throw new RuntimeException("Erro ao modificar usuário:: "+ e.getMessage());
         }
         return response;
@@ -118,7 +118,7 @@ public class UsuarioController {
         try {
             Optional<UsuarioModel> optionalUsuario = usuarioRepository.findById(id);
             if (optionalUsuario.isEmpty()) {
-                throw new NotFoundException("Usuário com o id:: "+id+" não encontrado!");
+                throw new NotFoundException().toUsuario(id);
             }
             UsuarioModel usuario = optionalUsuario.get();
             if (usuario.getAtivo()) {
@@ -131,7 +131,7 @@ public class UsuarioController {
         } catch (NotFoundException e) {
             response = ResponseEntity.status(404).body(e.getMensagem());
         } catch (Exception e) {
-            response = ResponseEntity.status(500).body("Erro ao modificar o status de atividade do usuário.");
+            response = ResponseEntity.status(400).body("Erro ao modificar o status de atividade do usuário.");
             throw new RuntimeException("Erro ao modificar o status de atividade do usuário:: "+ e.getMessage());
         }
         return response;
@@ -143,13 +143,13 @@ public class UsuarioController {
         try {
             Optional<UsuarioModel> optionalUsuario = usuarioRepository.findById(id);
             if (optionalUsuario.isEmpty()) {
-                throw new NotFoundException("Usuário com o id:: "+id+" não encontrado!");
+                throw new NotFoundException().toUsuario(id);
             }
             response = ResponseEntity.status(200).body("Usuário deletado com sucesso.");
         } catch (NotFoundException e)  {
             response = ResponseEntity.status(404).body(e.getMensagem());
         } catch (Exception e ) {
-            response = ResponseEntity.status(500).body("Erro ao deletar usuário.");
+            response = ResponseEntity.status(400).body("Erro ao deletar usuário.");
             throw new RuntimeException("Erro ao deletar usuário:: "+ e.getMessage());
         }
         return response;

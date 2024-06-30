@@ -1,13 +1,10 @@
 package com.example.projetoplanta.com.example.projetoplanta.DTO;
 
-import java.sql.Timestamp;
-
 import jakarta.validation.constraints.NotBlank;
 
 public record DuendeRecordDTO (
+    @NotBlank    
     String fkUsuario,
-    @NotBlank
-    String numeroNacionalId,
-    Timestamp dtIntegracao) {
     
-}
+    @NotBlank
+    String numeroNacionalId) {}

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,7 +35,7 @@ public class SolicitacaoController {
         try {
             List<SolicitacaoModel> listaSolicitacoes = solicitacaoRepository.findAll();
             if (listaSolicitacoes.isEmpty()) {
-                throw new NotFoundException("Nenhuma solicitação feita até o momento.");
+                throw new NotFoundException().toSolicitacao();
             }
             for (SolicitacaoModel solicitacao : listaSolicitacoes) {
                 methodsOn(solicitacao);
@@ -43,7 +44,7 @@ public class SolicitacaoController {
         } catch (NotFoundException e) {
             response = ResponseEntity.status(404).body(e.getMensagem());
         } catch (Exception e) {
-            response = ResponseEntity.status(500).body("Erro ao listar todas solicitações.");
+            response = ResponseEntity.status(400).body("Erro ao listar todas solicitações.");
             throw new RuntimeException("Erro ao listar todas solicitações:: "+ e.getMessage());
         }
         return response;
@@ -67,7 +68,7 @@ public class SolicitacaoController {
                 response = ResponseEntity.status(201).body("Solicitação feita com sucesso!");
             }
         } catch (Exception e) {
-            response = ResponseEntity.status(500).body("Erro ao solicitar modificação para Duende!");
+            response = ResponseEntity.status(400).body("Erro ao solicitar modificação para Duende!");
             throw new RuntimeException("Erro ao solicitar modificação para Duende:: "+ e.getMessage());
         }
         return response;
@@ -87,7 +88,7 @@ public class SolicitacaoController {
             solicitacaoRepository.save(solicitacao);
             response = ResponseEntity.status(201).body("Solicitação da foto feita com sucesso!");
         } catch (Exception e) {
-            response = ResponseEntity.status(500).body("Erro ao solicitar modificação de Foto!");
+            response = ResponseEntity.status(400).body("Erro ao solicitar modificação de Foto!");
             throw new RuntimeException("Erro ao solicitar modificação de Foto:: "+ e.getMessage());
         }
         return response;
@@ -99,7 +100,7 @@ public class SolicitacaoController {
         try {
             Optional<SolicitacaoModel> optionalSolicitacao = solicitacaoRepository.findById(id);
             if (optionalSolicitacao.isEmpty()) {
-                throw new NotFoundException("Solicitação com o id:: "+id+" não encontrada!");
+                throw new NotFoundException().toSolicitacao(id);
             }
             SolicitacaoModel solicitacao = optionalSolicitacao.get();
             methodsOn(solicitacao);
@@ -107,16 +108,34 @@ public class SolicitacaoController {
         } catch (NotFoundException e) {
             response = ResponseEntity.status(404).body(e.getMensagem());
         } catch (Exception e) {
-            response = ResponseEntity.status(500).body("Erro ao selecionar a solicitação com o id:: "+id);
+            response = ResponseEntity.status(400).body("Erro ao selecionar a solicitação com o id:: "+id);
             throw new RuntimeException("Erro ao selecionar a solicitação com o id:: "+id+":: "+ e.getMessage());
         }
         return response;
     }
-    // if (solicitacoes.isEmpty()) {
-    //     throw new NotFoundException("Solicitações não encontradas!");
-    // } else 
+
+    @PutMapping("/status/solicitacao/{id}")
+    public ResponseEntity<Object> finalizar(@PathVariable(name = "id") Integer id) {
+        ResponseEntity<Object> response;
+        try {
+            Optional<SolicitacaoModel> optionalSolicitacao = solicitacaoRepository.findById(id);
+            if (optionalSolicitacao.isEmpty()) {
+                throw new NotFoundException().toSolicitacao(id);
+            }
+            SolicitacaoModel solicitacao = optionalSolicitacao.get();
+            solicitacaoRepository.save(solicitacao);
+            response = ResponseEntity.status(201).body("Solicitação finalizada com sucesso, atual status da solicitação:: "+ solicitacao);
+        } catch (NotFoundException e) {
+            response = ResponseEntity.status(404).body(e.getMensagem());
+        } catch (Exception e) {
+            response = ResponseEntity.status(400).body("Erro ao finalizar a pendencia da solicitação com o id:: "+id);
+            throw new RuntimeException("Erro ao finalizar a pendencia da solicitação com o id:: "+id+":: "+ e.getMessage());
+        }
+        return response;
+    }
 
     private void methodsOn(SolicitacaoModel solicitacao) {
+        solicitacao.add(linkTo(methodOn(SolicitacaoController.class).finalizar(solicitacao.getId())).withRel("finalizar"));
         solicitacao.add(linkTo(methodOn(SolicitacaoController.class).listar(solicitacao.getId())).withRel("listar"));
         solicitacao.add(linkTo(methodOn(SolicitacaoController.class).listarTodos()).withRel("listarTodos"));
         solicitacao.add(linkTo(methodOn(SolicitacaoController.class).solicitarDuende(solicitacao.getSolicitante(), null)).withRel("solicitarDuende"));

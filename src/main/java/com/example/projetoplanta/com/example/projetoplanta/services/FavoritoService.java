@@ -12,7 +12,7 @@ import com.example.projetoplanta.com.example.projetoplanta.exceptions.NotFoundEx
 import com.example.projetoplanta.com.example.projetoplanta.modules.FavoritoModel;
 import com.example.projetoplanta.com.example.projetoplanta.modules.PlantaModel;
 import com.example.projetoplanta.com.example.projetoplanta.modules.UsuarioModel;
-import com.example.projetoplanta.com.example.projetoplanta.modules.PrimaryKey.FavoritoPK;
+import com.example.projetoplanta.com.example.projetoplanta.modules.PrimaryKey.FavoritoId;
 import com.example.projetoplanta.com.example.projetoplanta.repositories.FavoritoRepository;
 
 import jakarta.persistence.EntityManager;
@@ -38,7 +38,7 @@ public class FavoritoService {
 
     // MUDAR A QUERY PARA RETORNAR AS PLANTAS COM MAIS FAVORITOS
     public Optional<FavoritoModel> listarPlantasFavoritas(PlantaModel plantaModel) {
-        var favoritoPK = new FavoritoPK();
+        var favoritoPK = new FavoritoId();
         favoritoPK.setPlanta(plantaModel.getId());
         // .getResultList();
             throw new NotFoundException("Planta não tem favoritos.");
@@ -55,7 +55,7 @@ public class FavoritoService {
     }
 
     public String des_favoritarPlanta(UsuarioModel fkUsuario, PlantaModel fkPlanta) {
-        var favoritoPK = new FavoritoPK();
+        var favoritoPK = new FavoritoId();
         favoritoPK.setPlanta(fkPlanta.getId());
         favoritoPK.setUsuario(fkUsuario.getId());
         var favorito = new FavoritoModel();

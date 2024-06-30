@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.hateoas.RepresentationModel;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -30,9 +31,12 @@ public class DuendeModel extends RepresentationModel<DuendeModel> implements Ser
     private static final long serialVersionUID = 2L;
 
     @Id
-    private String fkUsuario;
+    private UsuarioModel fkUsuario;
+    
     private String numeroNascionalId;
+
     @CreationTimestamp
+    @Column(name = "dtIntegracao", nullable = false, updatable = false)
     private Timestamp dtIntegracao;
     
 }
