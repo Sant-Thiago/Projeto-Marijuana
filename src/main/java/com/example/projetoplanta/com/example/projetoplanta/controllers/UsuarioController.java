@@ -157,6 +157,7 @@ public class UsuarioController {
 
 
     private void methodsOn(UsuarioModel usuario) {
+        usuario.add(linkTo(methodOn(UsuarioController.class).cadastrar(null)).withRel("cadastrar"));
         usuario.add(linkTo(methodOn(UsuarioController.class).deletar(usuario.getId())).withRel("deletar"));
         usuario.add(linkTo(methodOn(UsuarioController.class).listarTodos()).withRel("listarTodos"));
         usuario.add(linkTo(methodOn(UsuarioController.class).listar(usuario.getId())).withRel("listar"));
