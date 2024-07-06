@@ -11,7 +11,7 @@ public record PlantaRecordDTO(
     String nomePop_2, 
     
     @NotBlank   
-    String genetica, 
+    String genetica, //Sativa
     
     @NotBlank   
     String porcentagemTHC, 

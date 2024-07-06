@@ -39,10 +39,10 @@ public class UsuarioController {
             var usuarioModel = new UsuarioModel();
             BeanUtils.copyProperties(usuario, usuarioModel);
             usuarioModel.setAtivo(true);
-            usuarioModel.setDtNascimento(this.formatarData(usuarioModel.getDtNascimento()));
+            // usuarioModel.setDtNascimento(this.formatarData(usuarioModel.getDtNascimento()));
 
-            usuarioRepository.save(usuarioModel);
-            response = ResponseEntity.status(201).body("Usuário criado com sucesso.");
+            UsuarioModel usuarioSaved = usuarioRepository.save(usuarioModel);
+            response = ResponseEntity.status(201).body(usuarioSaved);
         } catch (Exception e) {
             response = ResponseEntity.status(400).body("Erro ao criar o usuário!");
             throw new RuntimeException("Erro ao criar usuário:: "+ e.getMessage());

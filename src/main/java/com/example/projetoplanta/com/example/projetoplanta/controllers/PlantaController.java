@@ -30,10 +30,18 @@ public class PlantaController {
     PlantaRepository plantaRepository;
 
     @PostMapping("/cadastrar/planta")
-    public ResponseEntity<PlantaModel> cadastrarPlanta(@RequestBody @Valid PlantaRecordDTO planta) {
-        var plantaModel = new PlantaModel();
-        BeanUtils.copyProperties(planta, plantaModel);
-        return ResponseEntity.status(HttpStatus.CREATED).body(plantaRepository.save(plantaModel));
+    public ResponseEntity<Object> cadastrarPlanta(@RequestBody @Valid PlantaRecordDTO planta) {
+        ResponseEntity<Object> response;
+        try {
+            var plantaModel = new PlantaModel();
+            BeanUtils.copyProperties(planta, plantaModel);
+            PlantaModel plantaSaved = plantaRepository.save(plantaModel);
+            response = ResponseEntity.status(201).body(plantaSaved);
+        } catch (Exception e) {
+            response = ResponseEntity.status(400).body("Erro ao executar a criação da planta!");
+            // Logger.error(e.getMessage());
+        }
+        return response;
     }
 
     @GetMapping("/listar/plantas")

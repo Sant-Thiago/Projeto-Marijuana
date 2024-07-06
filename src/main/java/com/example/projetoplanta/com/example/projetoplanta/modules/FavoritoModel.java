@@ -35,6 +35,8 @@ public class FavoritoModel extends RepresentationModel<FavoritoModel> implements
     @EmbeddedId
     private FavoritoId id;
 
+// FAZER UM ID PARA TABELAS FRACAS
+
     @ManyToOne
     @MapsId("fkUsuario")
     @JoinColumn(name = "fkUsuario")
