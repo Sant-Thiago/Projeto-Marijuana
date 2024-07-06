@@ -30,29 +30,27 @@ public class PlantaController {
     PlantaRepository plantaRepository;
 
     @PostMapping("/cadastrar/planta")
-    public ResponseEntity<Object> cadastrarPlanta(@RequestBody @Valid PlantaRecordDTO planta) {
+    public ResponseEntity<Object> cadastrar(@RequestBody @Valid PlantaRecordDTO planta) {
         ResponseEntity<Object> response;
         try {
             var plantaModel = new PlantaModel();
             BeanUtils.copyProperties(planta, plantaModel);
             PlantaModel plantaSaved = plantaRepository.save(plantaModel);
             response = ResponseEntity.status(201).body(plantaSaved);
+            // Logger.saved("Planta "+planta.getId()+" criada com sucesso.");
         } catch (Exception e) {
             response = ResponseEntity.status(400).body("Erro ao executar a criação da planta!");
-            // Logger.error(e.getMessage());
+            // Logger.error("Erro ao criar planta!\n\n"+ e.getMessage());
         }
         return response;
     }
 
     @GetMapping("/listar/plantas")
-    public ResponseEntity<List<PlantaModel>> listarTodasPlantas() {
+    public ResponseEntity<List<PlantaModel>> listarTodas() {
         List<PlantaModel> listaTodasPlantas = plantaRepository.findAll();
         if (!listaTodasPlantas.isEmpty()) {
             for (PlantaModel planta : listaTodasPlantas) {
-                String id = planta.getId();
-                planta.add(linkTo(methodOn(PlantaController.class).selecionarPlanta(id)).withRel("listar"));
-                planta.add(linkTo(methodOn(PlantaController.class).atualizarPlanta(id, null)).withRel("atualizar"));
-
+                methodsOn(planta);
             }
         }
         return ResponseEntity.status(HttpStatus.OK).body(listaTodasPlantas);
@@ -64,19 +62,26 @@ public class PlantaController {
         if (planta.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Planta não encontrada.");
         }
-        planta.get().add(linkTo(methodOn(PlantaController.class).listarTodasPlantas()).withRel("listarTodas"));
-        planta.get().add(linkTo(methodOn(PlantaController.class).atualizarPlanta(id, null)).withRel("atualizar"));
+        methodsOn(planta.get());
         return ResponseEntity.status(HttpStatus.OK).body(planta.get());
     }
 
     @PutMapping("/atualizar/planta/{id}")
-    public ResponseEntity<Object> atualizarPlanta(@PathVariable(value = "id") String id, @RequestBody @Valid PlantaRecordDTO plantaRecordDTO ) {
+    public ResponseEntity<Object> atualizar(@PathVariable(value = "id") String id, @RequestBody @Valid PlantaRecordDTO plantaRecordDTO ) {
         Optional<PlantaModel> planta = plantaRepository.findById(id);
         if (planta.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Planta não encontrada.");
         }
         var plantaModel = planta.get();
+        methodsOn(plantaModel);
         BeanUtils.copyProperties(plantaRecordDTO, plantaModel);
         return ResponseEntity.status(HttpStatus.OK).body("Planta atualizada: " + plantaRepository.save(plantaModel));
+    }
+
+    private void methodsOn(PlantaModel planta) {
+        planta.add(linkTo(methodOn(PlantaController.class).cadastrar(null)).withRel("cadastrarPlanta"));
+        planta.add(linkTo(methodOn(PlantaController.class).selecionarPlanta(planta.getId())).withRel("selecionarPlanta"));
+        planta.add(linkTo(methodOn(PlantaController.class).listarTodas()).withRel("listarTodas"));
+        planta.add(linkTo(methodOn(PlantaController.class).atualizar(planta.getId(), null)).withRel("atualizar"));
     }
 }
