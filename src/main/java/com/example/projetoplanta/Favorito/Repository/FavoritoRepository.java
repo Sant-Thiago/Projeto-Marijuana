@@ -11,9 +11,9 @@ import com.example.projetoplanta.Favorito.Module.FavoritoModel;
 
 @Repository
 public interface FavoritoRepository extends JpaRepository<FavoritoModel, Integer> {
-    @Query("SELECT f FROM favorito FavoritoModel WHERE f.fkUsuario.id = :fkUsuario")
-    List<FavoritoModel> findByFkUsuario(@Param("fkUsuario")String fkUsuario);
+    @Query("SELECT f FROM FavoritoModel f WHERE f.fkUsuario.id = :fkUsuario")
+    List<FavoritoModel> findByFkUsuario(@Param("fkUsuario") String fkUsuario);
 
-    @Query("SELECT f FROM favorito FavoritoModel WHERE f.fkPlanta.id = :fkPlanta")
+    @Query("SELECT f FROM FavoritoModel f WHERE f.fkPlanta.id = :fkPlanta")
     List<FavoritoModel> findByFkPlanta(@Param("fkPlanta") String fkPlanta);
 }
