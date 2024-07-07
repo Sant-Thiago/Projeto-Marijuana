@@ -7,7 +7,8 @@ import org.hibernate.validator.constraints.Length;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
-public record UsuarioRecordDTO(
+public record UsuarioRequestDTO(
+    
     @NotBlank(message = "O email não pode estar em branco")  
     String email,
 

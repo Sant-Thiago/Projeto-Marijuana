@@ -33,6 +33,7 @@ public class PlantaController {
     public ResponseEntity<Object> cadastrar(@RequestBody @Valid PlantaRecordDTO planta) {
         ResponseEntity<Object> response;
         try {
+            
             var plantaModel = new PlantaModel();
             BeanUtils.copyProperties(planta, plantaModel);
             PlantaModel plantaSaved = plantaRepository.save(plantaModel);
