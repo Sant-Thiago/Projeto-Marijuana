@@ -6,6 +6,8 @@ import java.sql.Timestamp;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.hateoas.RepresentationModel;
 
+import com.example.projetoplanta.Planta.Module.PlantaModel;
+import com.example.projetoplanta.Usuario.Module.UsuarioModel;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,11 +40,11 @@ public class FavoritoModel extends RepresentationModel<FavoritoModel> implements
 
     @ManyToOne
     @JoinColumn(name = "fkUsuario")
-    private String fkUsuario;
+    private UsuarioModel fkUsuario;
 
     @ManyToOne
     @JoinColumn(name = "fkPlanta")
-    private String fkPlanta;
+    private PlantaModel fkPlanta;
 
     @CreationTimestamp
     @Column(name = "dataRegistro", nullable = false, updatable = false)
