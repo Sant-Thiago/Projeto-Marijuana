@@ -3,10 +3,10 @@ package com.example.projetoplanta.Favorito.Controller;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.projetoplanta.Favorito.DTO.FavoritoRecordDTO;
+import com.example.projetoplanta.Favorito.DTO.FavoritoDTO;
+import com.example.projetoplanta.Favorito.DTO.FavoritoRequestDTO;
+import com.example.projetoplanta.Favorito.Mapper.FavoritoMapper;
 import com.example.projetoplanta.Favorito.Module.FavoritoModel;
 import com.example.projetoplanta.Favorito.Repository.FavoritoRepository;
 import com.example.projetoplanta.exceptions.NotFoundException;
@@ -31,16 +33,16 @@ public class FavoritoController {
     FavoritoRepository favoritoRepository;
 
     @PostMapping("/favoritar/planta")
-    public ResponseEntity<Object> favoritarPlanta(@RequestBody @Valid FavoritoRecordDTO favoritoDto) {
+    public ResponseEntity<Object> favoritarPlanta(@RequestBody @Valid FavoritoRequestDTO favoritoRequestDTO) {
         ResponseEntity<Object> response;
         try {
-            FavoritoModel favorito = new FavoritoModel();
-            BeanUtils.copyProperties(favoritoDto, favorito);
-            FavoritoModel favoritoSaved = favoritoRepository.save(favorito);
-            response = ResponseEntity.status(201).body(favoritoSaved);
+            FavoritoModel favorito = FavoritoMapper.toModel(favoritoRequestDTO);
+
+            favorito = favoritoRepository.save(favorito);
+            response = ResponseEntity.status(201).body(FavoritoMapper.toDTO(favorito));
             // Logger.saved("Planta "+favorito.getFkPlanta()+" favoritada com sucesso.");
         } catch (Exception e) {
-            response = ResponseEntity.status(400).body("Erro ao favoritar a planta:: "+ favoritoDto);
+            response = ResponseEntity.status(400).body("Erro ao favoritar a planta!");
             // Logger.error("Erro ao favoritar a planta:: "+ favoritoDto + " do sistema!\n\n"e.getMessage());
         }
         return response;
@@ -55,9 +57,10 @@ public class FavoritoController {
                 throw new NotFoundException().toFavorito(id);
             }
             favoritoRepository.deleteById(id);
-            response = ResponseEntity.status(201).body("Favorito com o id:: "+id+" deletado com sucesso.");
+            response = ResponseEntity.status(200).body("Favorito com o id:: "+id+" deletado com sucesso.");
         } catch (NotFoundException e) {
             response = ResponseEntity.status(404).body(e.getMensagem());
+            // Logger.notFound("Nenhuma favorito com o id:: "+id+" encontrado no sistema!");
         } catch (Exception e) {
             response = ResponseEntity.status(400).body("Erro ao deletar o Favorito com o id:: "+id+" do sistema!");
             // Logger.error("Erro ao deletar o Favorito com o id:: "+id+" do sistema!\n\n"e.getMessage());
@@ -73,10 +76,12 @@ public class FavoritoController {
             if (listaFavoritos.isEmpty()) {
                 throw new NotFoundException().toFavorito();
             }
+            List<FavoritoDTO> favoritoDTOs = new ArrayList<>();
             for (FavoritoModel favorito : listaFavoritos) {
                 methodsOn(favorito);
+                favoritoDTOs.add(FavoritoMapper.toDTO(favorito));
             }
-            response = ResponseEntity.status(200).body(listaFavoritos);    
+            response = ResponseEntity.status(200).body(favoritoDTOs);    
         } catch (NotFoundException e) {
             response = ResponseEntity.status(404).body(e.getMensagem());
         } catch (Exception e) {
@@ -94,10 +99,12 @@ public class FavoritoController {
             if (listaFavoritos.isEmpty()) {
                 throw new NotFoundException().toFavorito();
             }
+            List<FavoritoDTO> favoritoDTOs = new ArrayList<>();
             for (FavoritoModel favorito : listaFavoritos) {
                 methodsOn(favorito);
+                favoritoDTOs.add(FavoritoMapper.toDTO(favorito));
             }
-            response = ResponseEntity.status(200).body(listaFavoritos);    
+            response = ResponseEntity.status(200).body(favoritoDTOs);    
         } catch (NotFoundException e) {
             response = ResponseEntity.status(404).body(e.getMensagem());
         } catch (Exception e) {
@@ -115,10 +122,12 @@ public class FavoritoController {
             if (listaFavoritos.isEmpty()) {
                 throw new NotFoundException().toFavorito();
             }
+            List<FavoritoDTO> favoritoDTOs = new ArrayList<>();
             for (FavoritoModel favorito : listaFavoritos) {
                 methodsOn(favorito);
+                favoritoDTOs.add(FavoritoMapper.toDTO(favorito));
             }
-            response = ResponseEntity.status(200).body(listaFavoritos);
+            response = ResponseEntity.status(200).body(favoritoDTOs);
         } catch (NotFoundException e) {
             response = ResponseEntity.status(404).body(e.getMensagem());
         } catch (Exception e) {
