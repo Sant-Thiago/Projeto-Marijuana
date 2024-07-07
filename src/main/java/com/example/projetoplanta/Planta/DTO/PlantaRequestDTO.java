@@ -3,6 +3,7 @@ package com.example.projetoplanta.Planta.DTO;
 import org.hibernate.validator.constraints.Length;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 public record PlantaRequestDTO(
@@ -17,22 +18,22 @@ public record PlantaRequestDTO(
     @Pattern(regexp = "Sativa|Indica|Ruderalis|Híbrido", message = "O campo genética deve ser 'Sativa', 'Indica', 'Ruderalis' ou 'Híbrido'") 
     String genetica,
     
-    @NotBlank   
+    @NotNull   
     Float porcentagemTHC, 
     
-    @NotBlank   
+    @NotNull   
     Float porcentagemCDB, 
     
     @NotBlank
     @Length(min = 2, max = 2, message = "O campo 'paisOrigem' deve ter exatamente 2 caracteres")
     String paisOrigem, 
     
-    @NotBlank   
+    @NotNull   
     Float alturaEmCM, 
     
-    @NotBlank   
+    @NotNull   
     Float gramaPorMetroQuadrado, 
     
-    @NotBlank   
+    @NotNull   
     Integer tempoFloracao
 ) {}

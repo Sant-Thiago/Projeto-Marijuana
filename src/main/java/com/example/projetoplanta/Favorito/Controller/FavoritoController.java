@@ -31,18 +31,22 @@ public class FavoritoController {
     
     @Autowired
     FavoritoRepository favoritoRepository;
+    
+    @Autowired
+    FavoritoMapper favoritoMapper;
 
     @PostMapping("/favoritar/planta")
     public ResponseEntity<Object> favoritarPlanta(@RequestBody @Valid FavoritoRequestDTO favoritoRequestDTO) {
         ResponseEntity<Object> response;
         try {
-            FavoritoModel favorito = FavoritoMapper.toModel(favoritoRequestDTO);
+            // FavoritoMapper favoritoMapper = new FavoritoMapper(); DESSA FORMA NÃO FUNCIONA POIS O UsuarioRepository E PlantaRepository NÃO SÃO INSTANCIADOS QUANDO A CLASSE FavoritoMapper É INSTANCIADA ASSIM, ARRUMAR ISSO COM O FavoritoService
+            FavoritoModel favorito = favoritoMapper.toModel(favoritoRequestDTO);
 
             favorito = favoritoRepository.save(favorito);
             response = ResponseEntity.status(201).body(FavoritoMapper.toDTO(favorito));
             // Logger.saved("Planta "+favorito.getFkPlanta()+" favoritada com sucesso.");
         } catch (Exception e) {
-            response = ResponseEntity.status(400).body("Erro ao favoritar a planta!");
+            response = ResponseEntity.status(400).body("Erro ao favoritar a planta!"+ e.getMessage());
             // Logger.error("Erro ao favoritar a planta:: "+ favoritoDto + " do sistema!\n\n"e.getMessage());
         }
         return response;
@@ -59,7 +63,7 @@ public class FavoritoController {
             favoritoRepository.deleteById(id);
             response = ResponseEntity.status(200).body("Favorito com o id:: "+id+" deletado com sucesso.");
         } catch (NotFoundException e) {
-            response = ResponseEntity.status(404).body(e.getMensagem());
+            response = ResponseEntity.status(404).body(e.getMessage());
             // Logger.notFound("Nenhuma favorito com o id:: "+id+" encontrado no sistema!");
         } catch (Exception e) {
             response = ResponseEntity.status(400).body("Erro ao deletar o Favorito com o id:: "+id+" do sistema!");
@@ -139,9 +143,9 @@ public class FavoritoController {
 
     private void methodsOn(FavoritoModel favorito) {
         favorito.add(linkTo(methodOn(FavoritoController.class).favoritarPlanta(null)).withRel("favoritarPlanta"));
-        favorito.add(linkTo(methodOn(FavoritoController.class).desfavoritarPlanta(null)).withRel("desfavoritarPlanta"));
-        favorito.add(linkTo(methodOn(FavoritoController.class).listarUsuariosFavoritos(null)).withRel("listarUsuariosFavoritos"));    
-        favorito.add(linkTo(methodOn(FavoritoController.class).listarPlantasFavoritos(null)).withRel("listarPlantasFavoritos"));    
+        favorito.add(linkTo(methodOn(FavoritoController.class).desfavoritarPlanta(favorito.getId())).withRel("desfavoritarPlanta"));
+        favorito.add(linkTo(methodOn(FavoritoController.class).listarUsuariosFavoritos(favorito.getFkUsuario().getId())).withRel("listarUsuariosFavoritos"));    
+        favorito.add(linkTo(methodOn(FavoritoController.class).listarPlantasFavoritos(favorito.getFkPlanta().getId())).withRel("listarPlantasFavoritos"));    
         favorito.add(linkTo(methodOn(FavoritoController.class).listarFavoritos()).withRel("listarFavoritos"));    
     }
 }
