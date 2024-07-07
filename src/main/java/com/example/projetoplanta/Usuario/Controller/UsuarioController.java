@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.projetoplanta.Usuario.DTO.UsuarioDTO;
 import com.example.projetoplanta.Usuario.DTO.UsuarioRequestDTO;
 import com.example.projetoplanta.Usuario.DTO.UsuarioSelectedDTO;
 import com.example.projetoplanta.Usuario.Mapper.UsuarioMapper;
@@ -99,14 +98,14 @@ public class UsuarioController {
     }
 
     @PutMapping("/modificar/usuario/{id}")
-    public ResponseEntity<Object> modificar(@PathVariable(value = "id") String id, @RequestBody @Valid UsuarioDTO usuarioDTO) {
+    public ResponseEntity<Object> modificar(@PathVariable(value = "id") String id, @RequestBody @Valid UsuarioRequestDTO usuarioRequestDTO) {
         ResponseEntity<Object> response;
         try {
             Optional<UsuarioModel> optionalUsuario = usuarioRepository.findById(id);
             if (optionalUsuario.isEmpty()) {
                 throw new NotFoundException().toUsuario(id);
             }
-            UsuarioModel usuario = UsuarioMapper.toModelModified(optionalUsuario.get(), usuarioDTO);
+            UsuarioModel usuario = UsuarioMapper.toModel(usuarioRequestDTO);
             usuario = usuarioRepository.save(usuario);
             response =  ResponseEntity.status(200).body(UsuarioMapper.toDTO(usuario));
         } catch (NotFoundException e) {

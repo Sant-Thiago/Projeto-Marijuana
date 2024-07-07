@@ -35,10 +35,10 @@ public class PlantaModel extends RepresentationModel<PlantaModel> implements Ser
     private String nomePop_1;
     private String nomePop_2;
     private String genetica;
-    private String porcentagemTHC;
-    private String porcentagemCDB;
+    private Float porcentagemTHC;
+    private Float porcentagemCDB;
     private String paisOrigem;
-    private String alturaEmCM;
-    private String gramaPorMetroQuadrado;
-    private String tempoFloracao;
+    private Float alturaEmCM;
+    private Float gramaPorMetroQuadrado;
+    private Integer tempoFloracao;
 }
