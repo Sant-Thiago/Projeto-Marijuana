@@ -2,7 +2,9 @@ package com.example.projetoplanta.Planta.DTO;
 
 import org.hibernate.validator.constraints.Length;
 
+import com.example.projetoplanta.Aroma.Module.AromaModel;
 import com.example.projetoplanta.Duende.Module.DuendeModel;
+import com.example.projetoplanta.Efeito.Module.EfeitoModel;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -25,6 +27,12 @@ public record PlantaRequestDTO(
     
     @NotNull   
     Float porcentagemCDB, 
+    
+    @NotBlank
+    AromaModel aroma_terpeno, 
+    
+    @NotBlank
+    EfeitoModel efeito, 
     
     @NotBlank
     DuendeModel duende,

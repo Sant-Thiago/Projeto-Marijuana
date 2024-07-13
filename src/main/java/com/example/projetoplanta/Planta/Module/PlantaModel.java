@@ -4,7 +4,9 @@ import java.io.Serializable;
 
 import org.springframework.hateoas.RepresentationModel;
 
+import com.example.projetoplanta.Aroma.Module.AromaModel;
 import com.example.projetoplanta.Duende.Module.DuendeModel;
+import com.example.projetoplanta.Efeito.Module.EfeitoModel;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -39,6 +41,8 @@ public class PlantaModel extends RepresentationModel<PlantaModel> implements Ser
     private String genetica;
     private Float porcentagemTHC;
     private Float porcentagemCDB;
+    private AromaModel fkAroma_terpeno;
+    private EfeitoModel fkEfeito;
     private DuendeModel responsavel;
     private String paisOrigem;
     private Float alturaEmCM;

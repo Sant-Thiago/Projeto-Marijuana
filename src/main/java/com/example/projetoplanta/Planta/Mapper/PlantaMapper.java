@@ -15,6 +15,8 @@ public class PlantaMapper {
         // plantaModel.setResponsavel(plantaRequestDTO.); FAZER O SELECT DO DUENDE PELO ID NO SERVICE E ENVIAR PARA O MAPPER LINDO
         plantaModel.setPorcentagemTHC(plantaRequestDTO.porcentagemTHC());
         plantaModel.setPorcentagemCDB(plantaRequestDTO.porcentagemCDB());
+        plantaModel.setFkAroma_terpeno(plantaRequestDTO.aroma_terpeno());
+        plantaModel.setFkEfeito(plantaRequestDTO.efeito());
         plantaModel.setPaisOrigem(plantaRequestDTO.paisOrigem());
         plantaModel.setAlturaEmCM(plantaRequestDTO.alturaEmCM());
         plantaModel.setGramaPorMetroQuadrado(plantaRequestDTO.gramaPorMetroQuadrado());
@@ -31,6 +33,8 @@ public class PlantaMapper {
             plantaModel.getGenetica(),
             plantaModel.getPorcentagemTHC(),
             plantaModel.getPorcentagemCDB(),
+            plantaModel.getFkAroma_terpeno(),
+            plantaModel.getFkEfeito(),
             plantaModel.getResponsavel(),
             plantaModel.getPaisOrigem(),
             plantaModel.getAlturaEmCM(),

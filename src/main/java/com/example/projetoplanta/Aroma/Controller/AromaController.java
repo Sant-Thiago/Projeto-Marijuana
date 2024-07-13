@@ -71,7 +71,7 @@ public class AromaController {
     }
 
     @PostMapping("/def/aroma")
-    public ResponseEntity<Object> virararoma(@RequestBody @Valid AromaDTO aromaDTO) {
+    public ResponseEntity<Object> defAroma(@RequestBody @Valid AromaDTO aromaDTO) {
         ResponseEntity<Object> response;
         try {
             AromaModel aromaModel = AromaMapper.toModel(aromaDTO);
@@ -108,6 +108,6 @@ public class AromaController {
         aroma.add(linkTo(methodOn(AromaController.class).atualizar(aroma.getId(), null)).withRel("atualizar"));        
         aroma.add(linkTo(methodOn(AromaController.class).listar(aroma.getId())).withRel("listar"));
         aroma.add(linkTo(methodOn(AromaController.class).listarTodos()).withRel("listarTodos"));
-        aroma.add(linkTo(methodOn(AromaController.class).virararoma(null)).withRel("virararoma"));
+        aroma.add(linkTo(methodOn(AromaController.class).defAroma(null)).withRel("definirAroma"));
     }
 }

@@ -34,6 +34,16 @@ public class NotFoundException extends RuntimeException {
         return this;
     }
     
+    public NotFoundException toEfeito() {
+        setMensagem("Nenhum Efeito encontrado com esses requisitos!");
+        return this;
+    }
+
+    public NotFoundException toEfeito(Integer id) {
+        setMensagem("Nenhum Efeito com o id:: "+id+" encontrado no sistema!");
+        return this;
+    }
+    
     public NotFoundException toFavorito() {
         setMensagem("Nenhum Favorito encontrado com esses requisitos!");
         return this;
