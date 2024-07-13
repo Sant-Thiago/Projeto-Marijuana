@@ -1,16 +1,12 @@
 package com.example.projetoplanta.Favorito.Mapper;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.example.projetoplanta.Favorito.DTO.FavoritoDTO;
 import com.example.projetoplanta.Favorito.DTO.FavoritoRequestDTO;
 import com.example.projetoplanta.Favorito.Module.FavoritoModel;
-import com.example.projetoplanta.Planta.Module.PlantaModel;
 import com.example.projetoplanta.Planta.Repository.PlantaRepository;
-import com.example.projetoplanta.Usuario.Module.UsuarioModel;
 import com.example.projetoplanta.Usuario.Repository.UsuarioRepository;
 
 @Component
@@ -25,10 +21,8 @@ public class FavoritoMapper {
 
     public FavoritoModel toModel(FavoritoRequestDTO favoritoRequestDTO) {
         FavoritoModel favoritoModel = new FavoritoModel();
-        Optional<UsuarioModel> fkUsuario = usuarioRepository.findById(favoritoRequestDTO.fkUsuario());
-        Optional<PlantaModel> fkPlanta = plantaRepository.findById(favoritoRequestDTO.fkPlanta());
-        favoritoModel.setFkUsuario(fkUsuario.get());
-        favoritoModel.setFkPlanta(fkPlanta.get());
+        favoritoModel.setFkUsuario(usuarioRepository.findById(favoritoRequestDTO.fkUsuario()).get());
+        favoritoModel.setFkPlanta(plantaRepository.findById(favoritoRequestDTO.fkPlanta()).get());
         return favoritoModel;
     }
     

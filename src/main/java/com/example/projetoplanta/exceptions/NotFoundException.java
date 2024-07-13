@@ -39,7 +39,7 @@ public class NotFoundException extends RuntimeException {
         return this;
     }
 
-    public NotFoundException toDuende(String id) {
+    public NotFoundException toDuende(Long id) {
         setMensagem("Nenhum duende com o id:: "+id+" encontrado no sistema!");
         return this;
     }

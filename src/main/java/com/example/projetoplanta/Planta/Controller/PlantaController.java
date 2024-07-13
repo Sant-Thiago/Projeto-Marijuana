@@ -31,13 +31,17 @@ public class PlantaController {
     @Autowired
     PlantaRepository plantaRepository;
 
+    @Autowired
+    PlantaMapper plantaMapper;
+
     @PostMapping("/cadastrar/planta")
     public ResponseEntity<Object> cadastrar(@RequestBody @Valid PlantaRequestDTO plantaRequestDTO) {
         ResponseEntity<Object> response;
         try {
-            PlantaModel planta = PlantaMapper.toModel(plantaRequestDTO);
+            // PlantaMapper plantaMapper = new PlantaMapper();
+            PlantaModel planta = plantaMapper.toModel(plantaRequestDTO);
             planta = plantaRepository.save(planta);
-            response = ResponseEntity.status(201).body(PlantaMapper.toDTO(planta));
+            response = ResponseEntity.status(201).body(plantaMapper.toDTO(planta));
             // Logger.saved("Planta "+planta.getId()+" criada com sucesso.");
         } catch (Exception e) {
             response = ResponseEntity.status(400).body("Erro ao executar a criação da planta!");
@@ -57,7 +61,7 @@ public class PlantaController {
             List<PlantaDTO> plantaSelectedDTOs = new ArrayList<>();
             for (PlantaModel planta : listaTodasPlantas) {
                 methodsOn(planta);
-                plantaSelectedDTOs.add(PlantaMapper.toDTO(planta));
+                plantaSelectedDTOs.add(plantaMapper.toDTO(planta));
             }
             responses = ResponseEntity.status(200).body(plantaSelectedDTOs);
         } catch (NotFoundException e) {
@@ -78,7 +82,7 @@ public class PlantaController {
             }
             PlantaModel planta = optinoalPlanta.get();
             methodsOn(planta);
-            response = ResponseEntity.status(200).body(PlantaMapper.toDTO(planta));
+            response = ResponseEntity.status(200).body(plantaMapper.toDTO(planta));
             // Logger.select("Planta "+id+" selecionada com sucesso.");
         } catch (NotFoundException e) {
             response = ResponseEntity.status(404).body(e.getMensagem());
@@ -90,7 +94,7 @@ public class PlantaController {
         return response;
     }
 
-    @PutMapping("/atualizar/planta/{id}")
+    @PutMapping("/up/planta/{id}")
     public ResponseEntity<Object> atualizar(@PathVariable(value = "id") String id, @RequestBody @Valid PlantaRequestDTO plantaRequestDTO ) {
         ResponseEntity<Object> response;
         try {
@@ -98,9 +102,10 @@ public class PlantaController {
             if (optionalPlanta.isEmpty()) {
                 throw new NotFoundException().toPlanta(id);
             }
-            PlantaModel planta = PlantaMapper.toModel(plantaRequestDTO);
+            // PlantaMapper plantaMapper = new PlantaMapper();
+            PlantaModel planta = plantaMapper.toUpdateModel(plantaRequestDTO, optionalPlanta.get());
             methodsOn(planta);
-            response = ResponseEntity.status(200).body(PlantaMapper.toDTO(planta));
+            response = ResponseEntity.status(200).body(plantaMapper.toDTO(planta));
         } catch (NotFoundException e) {
             response = ResponseEntity.status(404).body(e.getMensagem());
             // Logger.notFound("Planta "+id+" não encontrada no sistema!");

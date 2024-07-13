@@ -2,9 +2,6 @@ package com.example.projetoplanta.Planta.DTO;
 
 import org.hibernate.validator.constraints.Length;
 
-import com.example.projetoplanta.Aroma.Module.AromaModel;
-import com.example.projetoplanta.Duende.Module.DuendeModel;
-import com.example.projetoplanta.Efeito.Module.EfeitoModel;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -28,14 +25,12 @@ public record PlantaRequestDTO(
     @NotNull   
     Float porcentagemCDB, 
     
-    @NotBlank
-    AromaModel aroma_terpeno, 
+    Integer aroma_terpeno, 
     
-    @NotBlank
-    EfeitoModel efeito, 
+    Integer efeito, 
     
-    @NotBlank
-    DuendeModel duende,
+    @NotNull
+    Long responsavel,
 
     @NotBlank
     @Length(min = 2, max = 2, message = "O campo 'paisOrigem' deve ter exatamente 2 caracteres")

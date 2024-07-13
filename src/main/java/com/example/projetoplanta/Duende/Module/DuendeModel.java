@@ -10,7 +10,11 @@ import com.example.projetoplanta.Usuario.Module.UsuarioModel;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -28,14 +32,19 @@ import lombok.ToString;
 
 @Entity
 @Table(name = "duende")
-@EqualsAndHashCode(of = "fkUsuario", callSuper = false)
+@EqualsAndHashCode(of = "id", callSuper = false)
 public class DuendeModel extends RepresentationModel<DuendeModel> implements Serializable{
     private static final long serialVersionUID = 2L;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "fkUsuario")
     private UsuarioModel fkUsuario;
     
-    private String numeroNascionalId;
+    private String numeroNacionalId;
 
     @CreationTimestamp
     @Column(name = "dtIntegracao", nullable = false, updatable = false)

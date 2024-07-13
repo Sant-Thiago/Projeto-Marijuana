@@ -40,6 +40,7 @@ public class UsuarioMapper {
             usuarioModel.getId(),
             usuarioModel.getEmail(),
             usuarioModel.getNome(),
+            usuarioModel.getFoto(),
             usuarioModel.getPais(),
             usuarioModel.getDtNascimento(),
             usuarioModel.getGenero()

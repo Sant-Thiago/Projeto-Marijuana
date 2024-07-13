@@ -6,6 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.example.projetoplanta.Duende.Module.DuendeModel;
 
 @Repository
-public interface DuendeRepository extends JpaRepository<DuendeModel, String> {
-    
+public interface DuendeRepository extends JpaRepository<DuendeModel, Long> {
 }

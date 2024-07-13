@@ -72,7 +72,27 @@ public class FavoritoController {
         return response;
     }
 
-    @GetMapping("/listar/favoritos/{fkusuario}")
+    @GetMapping("/listar/favorito/{id}") 
+    public ResponseEntity<Object> listarFavorito(@PathVariable(value = "id") Integer id) {
+        ResponseEntity<Object> response;
+        try {
+            Optional<FavoritoModel> optionalFavorito = favoritoRepository.findById(id);
+            if (optionalFavorito.isEmpty()) {
+                throw new NotFoundException().toFavorito(id);
+            } 
+            FavoritoModel favoritoModel = optionalFavorito.get();
+            response = ResponseEntity.status(200).body(FavoritoMapper.toDTO(favoritoModel));
+        } catch (NotFoundException e) {
+            response = ResponseEntity.status(404).body(e.getMensagem());
+            // Logger.notFound("Nenhuma favorito com o id:: "+id+" encontrado no sistema!");
+        } catch (Exception e) {
+            response = ResponseEntity.status(400).body("Erro ao selecionar Favorito no sistema!");
+            // Logger.notFound("Erro ao selecionar o Favorito com o id:: "+id+" no sistema!");
+        }
+        return response;
+    }
+
+    @GetMapping("/favoritos/usuario/{fkusuario}")
     public ResponseEntity<Object> listarUsuariosFavoritos(@PathVariable(name = "fkusuario") String fkUsuario) {
         ResponseEntity<Object> response;
         try {
@@ -95,7 +115,7 @@ public class FavoritoController {
         return response;
     }
 
-    @GetMapping("/plantas/favoritas/{fkplanta}")
+    @GetMapping("/favoritos/planta/{fkplanta}")
     public ResponseEntity<Object> listarPlantasFavoritos(@PathVariable(name = "fkplanta") String fkPlanta) {
         ResponseEntity<Object> response;
         try {

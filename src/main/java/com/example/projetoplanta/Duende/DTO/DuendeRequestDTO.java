@@ -2,7 +2,7 @@ package com.example.projetoplanta.Duende.DTO;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record DuendeRecordDTO (
+public record DuendeRequestDTO (
     @NotBlank    
     String fkUsuario,
     

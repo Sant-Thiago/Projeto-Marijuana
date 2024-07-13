@@ -6,7 +6,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,7 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.projetoplanta.Duende.DTO.DuendeRecordDTO;
+import com.example.projetoplanta.Duende.DTO.DuendeRequestDTO;
+import com.example.projetoplanta.Duende.Mappper.DuendeMapper;
 import com.example.projetoplanta.Duende.Module.DuendeModel;
 import com.example.projetoplanta.Duende.Repository.DuendeRepository;
 import com.example.projetoplanta.exceptions.NotFoundException;
@@ -28,6 +28,9 @@ public class DuendeController {
     
     @Autowired
     DuendeRepository duendeRepository;
+
+    @Autowired
+    DuendeMapper duendeMapper;
 
     @GetMapping("/listar/duendes")
     public ResponseEntity<List<DuendeModel>> listarTodos() {
@@ -51,7 +54,7 @@ public class DuendeController {
     }
 
     @GetMapping("/listar/duende/{id}")
-    public ResponseEntity<Object> listar(@PathVariable(value = "id") String id) {
+    public ResponseEntity<Object> listar(@PathVariable(value = "id") Long id) {
         ResponseEntity<Object> response;
         try {
             Optional<DuendeModel> optionalDuende = duendeRepository.findById(id);
@@ -70,23 +73,22 @@ public class DuendeController {
         return response;
     }
 
-    @PostMapping("/virar/duende")
-    public ResponseEntity<Object> virarDuende(@RequestBody @Valid DuendeRecordDTO duende) {
+    @PostMapping("/def/duende")
+    public ResponseEntity<Object> defDuende(@RequestBody @Valid DuendeRequestDTO duendeDTO) {
         ResponseEntity<Object> response;
         try {
-            var duendeModel = new DuendeModel();
-            BeanUtils.copyProperties(duende, duendeModel);
-            duendeRepository.save(duendeModel);
-            response = ResponseEntity.status(201).body("Duende " + duendeModel.getNumeroNascionalId() + ". Criado com sucesso.");
+            DuendeModel duende = duendeMapper.toModel(duendeDTO);
+            duende = duendeRepository.save(duende);
+            response = ResponseEntity.status(201).body(duendeMapper.toDTO(duende));
         } catch (Exception e) {
-            response = ResponseEntity.status(400).body("Erro ao virar duende!");
-            throw new RuntimeException("Erro ao virar duende:: "+ e.getMessage());
+            response = ResponseEntity.status(400).body("Erro ao definir duende!");
+            // Logger.error RuntimeException("Erro ao definir duende:: "+ e.getMessage());
         }
         return response;
     }
 
     @DeleteMapping("/deletar/duende/{id}")
-    public ResponseEntity<Object> deletar(@PathVariable(value = "id") String id) {
+    public ResponseEntity<Object> deletar(@PathVariable(value = "id") Long id) {
         ResponseEntity<Object> response;
         try {
             Optional<DuendeModel> optionalDuende = duendeRepository.findById(id);
@@ -95,7 +97,7 @@ public class DuendeController {
             }
             DuendeModel duende = optionalDuende.get();
             duendeRepository.delete(duende);
-            response = ResponseEntity.status(200).body("Duende:: "+duende.getNumeroNascionalId()+" deletado com sucesso.");
+            response = ResponseEntity.status(200).body("Duende:: "+duende.getNumeroNacionalId()+" deletado com sucesso.");
         } catch (NotFoundException e) {
             response = ResponseEntity.status(404).body(e.getMensagem());
         } catch (Exception e) {
@@ -106,9 +108,9 @@ public class DuendeController {
     }
 
     private void methodsOn(DuendeModel duende) {
-        duende.add(linkTo(methodOn(DuendeController.class).deletar(duende.getFkUsuario().getId())).withRel("deletar"));        
-        duende.add(linkTo(methodOn(DuendeController.class).listar(duende.getFkUsuario().getId())).withRel("listar"));
+        duende.add(linkTo(methodOn(DuendeController.class).deletar(duende.getId())).withRel("deletar"));        
+        duende.add(linkTo(methodOn(DuendeController.class).listar(duende.getId())).withRel("listar"));
         duende.add(linkTo(methodOn(DuendeController.class).listarTodos()).withRel("listarTodos"));
-        duende.add(linkTo(methodOn(DuendeController.class).virarDuende(null)).withRel("virarDuende"));
+        duende.add(linkTo(methodOn(DuendeController.class).defDuende(null)).withRel("definirDuende"));
     }
 }
