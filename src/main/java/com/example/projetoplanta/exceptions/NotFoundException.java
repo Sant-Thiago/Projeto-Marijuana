@@ -60,7 +60,22 @@ public class NotFoundException extends RuntimeException {
     }
     
     public NotFoundException toFavorito(Integer id) {
-        setMensagem("Nenhum favorito encontrado com o id:: "+id+" encontrado no sistema!");
+        setMensagem("Nenhum favorito com o id:: "+id+" encontrado no sistema!");
+        return this;
+    }
+
+    public NotFoundException toImagem() {
+        setMensagem("Nenhuma Imagem encontrado no sistema!");
+        return this;
+    }
+    
+    public NotFoundException toImagem(Integer id) {
+        setMensagem("Nenhuma Imagem com o id:: "+id+" encontrada no sistema!");
+        return this;
+    }
+
+    public NotFoundException toImagem(String fkPlanta) {
+        setMensagem("Nenhuma Imagem da Planta:: "+fkPlanta+" encontrada no sistema!");
         return this;
     }
     
