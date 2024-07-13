@@ -6,10 +6,10 @@ import com.example.projetoplanta.Efeito.Module.EfeitoModel;
 public class EfeitoMapper {
     
     public static EfeitoModel toModel(EfeitoDTO efeitoDTO) {
-        EfeitoModel aromaModel = new EfeitoModel();
-        aromaModel.setTipo(efeitoDTO.tipo());
-        aromaModel.setNome(efeitoDTO.nome());
-        aromaModel.setCausa(efeitoDTO.causa());
-        return aromaModel;
+        EfeitoModel efeitoModel = new EfeitoModel();
+        efeitoModel.setTipo(efeitoDTO.tipo());
+        efeitoModel.setNome(efeitoDTO.nome());
+        efeitoModel.setCausa(efeitoDTO.causa());
+        return efeitoModel;
     }
 }

@@ -24,6 +24,16 @@ public class NotFoundException extends RuntimeException {
         return this;
     }
 
+    public NotFoundException toComentario() {
+        setMensagem("Nenhum comentario encontrado no sistema!");
+        return this;
+    }
+
+    public NotFoundException toComentario(Integer id) {
+        setMensagem("Nenhum comentario com o id:: "+id+" encontrado no sistema!");
+        return this;
+    }
+
     public NotFoundException toDuende() {
         setMensagem("Nenhum duende encontrado no sistema!");
         return this;
