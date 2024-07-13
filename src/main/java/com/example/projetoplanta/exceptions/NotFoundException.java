@@ -14,8 +14,18 @@ public class NotFoundException extends RuntimeException {
 
     private String mensagem;
 
+    public NotFoundException toAroma() {
+        setMensagem("Nenhum aroma encontrado no sistema!");
+        return this;
+    }
+
+    public NotFoundException toAroma(Integer id) {
+        setMensagem("Nenhum aroma com o id:: "+id+" encontrado no sistema!");
+        return this;
+    }
+
     public NotFoundException toDuende() {
-        setMensagem("Nenhum duende não encontrado no sistema!");
+        setMensagem("Nenhum duende encontrado no sistema!");
         return this;
     }
 

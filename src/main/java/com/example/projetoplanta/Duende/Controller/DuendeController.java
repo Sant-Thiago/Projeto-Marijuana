@@ -85,7 +85,7 @@ public class DuendeController {
         return response;
     }
 
-    @DeleteMapping("deletar/duende/{id}")
+    @DeleteMapping("/deletar/duende/{id}")
     public ResponseEntity<Object> deletar(@PathVariable(value = "id") String id) {
         ResponseEntity<Object> response;
         try {

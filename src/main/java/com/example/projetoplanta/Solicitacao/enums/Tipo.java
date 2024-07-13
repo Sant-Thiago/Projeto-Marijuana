@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum tipoSolicitacao {
+public enum Tipo {
     DUENDE("DUENDE"),
     FOTO("FOTO");
 

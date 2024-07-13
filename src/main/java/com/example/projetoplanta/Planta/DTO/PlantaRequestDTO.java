@@ -2,6 +2,8 @@ package com.example.projetoplanta.Planta.DTO;
 
 import org.hibernate.validator.constraints.Length;
 
+import com.example.projetoplanta.Duende.Module.DuendeModel;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -24,6 +26,9 @@ public record PlantaRequestDTO(
     @NotNull   
     Float porcentagemCDB, 
     
+    @NotBlank
+    DuendeModel duende,
+
     @NotBlank
     @Length(min = 2, max = 2, message = "O campo 'paisOrigem' deve ter exatamente 2 caracteres")
     String paisOrigem, 

@@ -1,5 +1,7 @@
 package com.example.projetoplanta.Planta.DTO;
 
+import com.example.projetoplanta.Duende.Module.DuendeModel;
+
 public record PlantaDTO(
     String id,
     String nome, 
@@ -8,6 +10,7 @@ public record PlantaDTO(
     String genetica,
     Float porcentagemTHC, 
     Float porcentagemCDB, 
+    DuendeModel responsavel,
     String paisOrigem, 
     Float alturaEmCM, 
     Float gramaPorMetroQuadrado, 

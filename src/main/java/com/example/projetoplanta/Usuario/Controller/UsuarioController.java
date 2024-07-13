@@ -66,7 +66,7 @@ public class UsuarioController {
             }
             responses = ResponseEntity.status(200).body(usuarioSelectedDTOs);
         } catch(NotFoundException e) {
-            responses =ResponseEntity.status(404).body(List.of(e.getMensagem()));
+            responses = ResponseEntity.status(404).body(List.of(e.getMensagem()));
             // Logger.notFound("Nenhum dado encontrado no sistema!");
         } catch (Exception e) {
             responses = ResponseEntity.status(400).body(List.of("Erro ao listar todos usuários!"));

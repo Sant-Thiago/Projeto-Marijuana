@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import org.springframework.hateoas.RepresentationModel;
 
+import com.example.projetoplanta.Duende.Module.DuendeModel;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -37,6 +39,7 @@ public class PlantaModel extends RepresentationModel<PlantaModel> implements Ser
     private String genetica;
     private Float porcentagemTHC;
     private Float porcentagemCDB;
+    private DuendeModel responsavel;
     private String paisOrigem;
     private Float alturaEmCM;
     private Float gramaPorMetroQuadrado;

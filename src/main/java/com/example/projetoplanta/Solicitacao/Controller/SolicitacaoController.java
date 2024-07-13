@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.projetoplanta.Solicitacao.Module.SolicitacaoModel;
 import com.example.projetoplanta.Solicitacao.Repository.SolicitacaoRepository;
-import com.example.projetoplanta.Solicitacao.enums.tipoSolicitacao;
+import com.example.projetoplanta.Solicitacao.enums.Tipo;
 import com.example.projetoplanta.Usuario.Module.UsuarioModel;
 import com.example.projetoplanta.exceptions.NotFoundException;
 
@@ -54,14 +54,14 @@ public class SolicitacaoController {
     public ResponseEntity<Object> solicitarDuende(@PathVariable(name = "solicitante") UsuarioModel solicitante, @RequestParam("motivo") String motivo) {
         ResponseEntity<Object> response;
         try {
-            List<SolicitacaoModel> solicitacoes = solicitacaoRepository.findBySolicitanteAndTipo(solicitante, tipoSolicitacao.DUENDE.getValor());
+            List<SolicitacaoModel> solicitacoes = solicitacaoRepository.findBySolicitanteAndTipo(solicitante, Tipo.DUENDE.getValor());
             if (solicitacoes.size() > 3) {
                 response = ResponseEntity.status(200).body("A solicitação está em análise.");
             } else {
                 SolicitacaoModel solicitacao = new SolicitacaoModel();
                 solicitacao.setSolicitante(solicitante);
                 solicitacao.setMotivo(motivo);
-                solicitacao.setTipo(tipoSolicitacao.DUENDE.getValor());
+                solicitacao.setTipo(Tipo.DUENDE.getValor());
                 solicitacao.setStatus("PENDENTE");
                 
                 solicitacaoRepository.save(solicitacao);
@@ -81,7 +81,7 @@ public class SolicitacaoController {
             SolicitacaoModel solicitacao = new SolicitacaoModel();
             solicitacao.setSolicitante(solicitante);
             solicitacao.setMotivo(null);
-            solicitacao.setTipo(tipoSolicitacao.FOTO.getValor());
+            solicitacao.setTipo(Tipo.FOTO.getValor());
             solicitacao.setFotoUsuario(foto);
             solicitacao.setStatus("PENDENTE");
 
