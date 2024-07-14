@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.projetoplanta.Imagem.DTO.ImagemDTO;
 import com.example.projetoplanta.Imagem.DTO.ImagemRequestDTO;
 import com.example.projetoplanta.Imagem.Mapper.ImagemMapper;
 import com.example.projetoplanta.Imagem.Module.ImagemModel;
@@ -43,7 +43,7 @@ public class ImagemController {
             ImagemModel imagem = imagemMapper.toModel(imagemRequestDTO);
             imagem = imagemRepository.save(imagem);
 
-            response = ResponseEntity.status(201).body(ImagemMapper.toDTO(imagem));
+            response = ResponseEntity.status(201).body(imagemMapper.toDTO(imagem));
             // Logger.saved("Imagem "+imagem.getId()+" definida com sucesso.");
         } catch (Exception e) {
             response = ResponseEntity.status(400).body("Erro ao definir a imagem!"+ e.getMessage());
@@ -62,7 +62,7 @@ public class ImagemController {
             }
             ImagemModel imagem = imagemMapper.toModel(imagemRequestDTO);
             imagem = imagemRepository.save(imagem);
-            response = ResponseEntity.status(200).body(ImagemMapper.toDTO(imagem));
+            response = ResponseEntity.status(200).body(imagem);
         } catch (NotFoundException e) {
             response = ResponseEntity.status(404).body(e.getMessage());
             // Logger.notFound("Nenhuma Imagem com o id:: "+id+" encontrada no sistema!");
@@ -93,8 +93,8 @@ public class ImagemController {
         return response;
     }
 
-    @GetMapping("/listar/imagens/{id}")
-    public ResponseEntity<Object> listar(@PathVariable(name = "id") Integer id) {
+    @GetMapping("/listar/imagens")
+    public ResponseEntity<Object> listar(@RequestParam(name = "i") Integer id) {
         ResponseEntity<Object> response;
         try {
             Optional<ImagemModel> optionalImagem = imagemRepository.findById(id);
@@ -104,7 +104,7 @@ public class ImagemController {
             ImagemModel imagem = optionalImagem.get();
             methodsOn(imagem);
 
-            response = ResponseEntity.status(200).body(ImagemMapper.toDTO(imagem));    
+            response = ResponseEntity.status(200).body(imagem);    
         } catch (NotFoundException e) {
             response = ResponseEntity.status(404).body(e.getMensagem());
         } catch (Exception e) {
@@ -122,10 +122,10 @@ public class ImagemController {
             if (listaImagens.isEmpty()) {
                 throw new NotFoundException().toImagem(fkPlanta);
             }
-            List<ImagemDTO> imagemDTOs = new ArrayList<>();
+            List<ImagemModel> imagemDTOs = new ArrayList<>();
             for (ImagemModel imagem : listaImagens) {
                 methodsOn(imagem);
-                imagemDTOs.add(ImagemMapper.toDTO(imagem));
+                imagemDTOs.add(imagem);
             }
             response = ResponseEntity.status(200).body(imagemDTOs);    
         } catch (NotFoundException e) {
