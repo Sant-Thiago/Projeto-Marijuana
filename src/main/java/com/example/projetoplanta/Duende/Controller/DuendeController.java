@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.projetoplanta.Duende.DTO.DuendeRequestDTO;
-import com.example.projetoplanta.Duende.Mappper.DuendeMapper;
+import com.example.projetoplanta.Duende.Mapper.DuendeMapper;
 import com.example.projetoplanta.Duende.Module.DuendeModel;
 import com.example.projetoplanta.Duende.Repository.DuendeRepository;
 import com.example.projetoplanta.exceptions.NotFoundException;
@@ -59,7 +59,7 @@ public class DuendeController {
         try {
             Optional<DuendeModel> optionalDuende = duendeRepository.findById(id);
             if (optionalDuende.isEmpty()) {
-                throw new NotFoundException().toDuende();
+                throw new NotFoundException().toDuende(id);
             }
             DuendeModel duende = optionalDuende.get();
             methodsOn(duende);

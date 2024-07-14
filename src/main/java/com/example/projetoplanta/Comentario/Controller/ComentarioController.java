@@ -3,6 +3,7 @@ package com.example.projetoplanta.Comentario.Controller;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,7 +16,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.projetoplanta.Comentario.DTO.ComentarioDTO;
+import com.example.projetoplanta.Comentario.DTO.ComentarioRequestDTO;
+import com.example.projetoplanta.Comentario.DTO.ComentarioResponseDTO;
 import com.example.projetoplanta.Comentario.Mapper.ComentarioMapper;
 import com.example.projetoplanta.Comentario.Module.ComentarioModel;
 import com.example.projetoplanta.Comentario.Repository.ComentarioRepository;
@@ -28,6 +30,9 @@ public class ComentarioController {
     
     @Autowired
     ComentarioRepository comentarioRepository;
+    
+    @Autowired
+    ComentarioMapper comentarioMapper;
 
     @GetMapping("/listar/comentarios")
     public ResponseEntity<List<?>> listarTodos() {
@@ -37,8 +42,10 @@ public class ComentarioController {
             if (listaTodosefeitos.isEmpty()) {
                 throw new NotFoundException().toComentario();
             }
+            List<ComentarioResponseDTO> comentarioResponseDTOs = new ArrayList<>(); 
             for (ComentarioModel comentario : listaTodosefeitos) {
                 methodsOn(comentario);
+                comentarioResponseDTOs.add(comentarioMapper.toDTO(comentario));
             }
             responses = ResponseEntity.status(200).body(listaTodosefeitos);
         } catch (NotFoundException e) {
@@ -60,7 +67,7 @@ public class ComentarioController {
             }
             ComentarioModel comentario = optionalefeito.get();
             methodsOn(comentario);
-            response = ResponseEntity.status(200).body(comentario);
+            response = ResponseEntity.status(200).body(comentarioMapper.toDTO(comentario));
         } catch (NotFoundException e) {
             response = ResponseEntity.status(404).body(e.getMensagem());
         } catch (Exception e) {
@@ -71,12 +78,12 @@ public class ComentarioController {
     }
 
     @PostMapping("/def/comentario")
-    public ResponseEntity<Object> defEfeito(@RequestBody @Valid ComentarioDTO comentarioDTO) {
+    public ResponseEntity<Object> defEfeito(@RequestBody @Valid ComentarioRequestDTO comentarioRequestDTO) {
         ResponseEntity<Object> response;
         try {
-            ComentarioModel ComentarioModel = ComentarioMapper.toModel(comentarioDTO);
+            ComentarioModel ComentarioModel = comentarioMapper.toModel(comentarioRequestDTO);
             comentarioRepository.save(ComentarioModel);
-            response = ResponseEntity.status(201).body("comentario " + ComentarioModel.getId() + ". Criado com sucesso.");
+            response = ResponseEntity.status(201).body(comentarioMapper.toDTO(ComentarioModel));
         } catch (Exception e) {
             response = ResponseEntity.status(400).body("Erro ao definir comentario!");
             // Logger.error RuntimeException("Erro ao definir comentario:: "+ e.getMessage());
@@ -85,14 +92,14 @@ public class ComentarioController {
     }
 
     @PutMapping("/up/comentario/{id}")
-    public ResponseEntity<Object> atualizar(@PathVariable(value = "id") Integer id, @RequestBody @Valid ComentarioDTO comentarioDTO) {
+    public ResponseEntity<Object> atualizar(@PathVariable(value = "id") Integer id, @RequestBody @Valid ComentarioRequestDTO comentarioRequestDTO) {
         ResponseEntity<Object> response;
         try {
             Optional<ComentarioModel> optionalefeito = comentarioRepository.findById(id);
             if (optionalefeito.isEmpty()) {
                 throw new NotFoundException().toComentario(id);
             }
-            ComentarioModel comentario = ComentarioMapper.toModel(comentarioDTO);
+            ComentarioModel comentario = comentarioMapper.toModel(comentarioRequestDTO);
             comentario = comentarioRepository.save(comentario);
             response = ResponseEntity.status(200).body("Comentario:: "+comentario.getId()+" atualizado com sucesso!");
         } catch (NotFoundException e) {

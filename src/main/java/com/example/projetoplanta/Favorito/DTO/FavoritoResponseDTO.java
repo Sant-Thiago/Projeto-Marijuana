@@ -6,7 +6,7 @@ import com.example.projetoplanta.Planta.Module.PlantaModel;
 import com.example.projetoplanta.Usuario.Module.UsuarioModel;
 
 
-public record FavoritoDTO(
+public record FavoritoResponseDTO(
     Integer id,
     UsuarioModel fkUsuario,
     PlantaModel fkPlanta,

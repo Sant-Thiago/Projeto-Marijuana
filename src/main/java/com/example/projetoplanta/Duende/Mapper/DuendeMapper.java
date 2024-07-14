@@ -1,4 +1,4 @@
-package com.example.projetoplanta.Duende.Mappper;
+package com.example.projetoplanta.Duende.Mapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

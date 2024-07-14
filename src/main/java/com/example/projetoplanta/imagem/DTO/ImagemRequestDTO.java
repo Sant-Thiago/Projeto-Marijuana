@@ -1,18 +1,11 @@
-package com.example.projetoplanta.imagem.DTO;
-
-import java.sql.Timestamp;
-
-import com.example.projetoplanta.Planta.Module.PlantaModel;
+package com.example.projetoplanta.Imagem.DTO;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record ImagemRequestDTO(
-    @NotBlank    
-    PlantaModel fkPlanta,
-    
-    @NotBlank
-    String caminho,
+public record ImagemRequestDTO (
+    @NotBlank   
+    String fkPlanta,
 
     @NotBlank
-    Timestamp dtArmazenamento
+    String caminho
 ) {}

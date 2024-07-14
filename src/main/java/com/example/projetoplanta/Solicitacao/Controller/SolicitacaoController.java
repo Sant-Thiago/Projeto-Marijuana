@@ -4,6 +4,7 @@ package com.example.projetoplanta.Solicitacao.Controller;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,14 +14,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.projetoplanta.Solicitacao.DTO.SolicitacaoRequestDTO;
+import com.example.projetoplanta.Solicitacao.DTO.SolicitacaoResponseDTO;
+import com.example.projetoplanta.Solicitacao.Mapper.SolicitacaoMapper;
 import com.example.projetoplanta.Solicitacao.Module.SolicitacaoModel;
 import com.example.projetoplanta.Solicitacao.Repository.SolicitacaoRepository;
 import com.example.projetoplanta.Solicitacao.enums.Tipo;
 import com.example.projetoplanta.Usuario.Module.UsuarioModel;
+import com.example.projetoplanta.Usuario.Repository.UsuarioRepository;
 import com.example.projetoplanta.exceptions.NotFoundException;
+
+import jakarta.validation.Valid;
 
 
 @RestController
@@ -28,6 +36,9 @@ public class SolicitacaoController {
     
     @Autowired
     SolicitacaoRepository solicitacaoRepository;
+    
+    @Autowired
+    UsuarioRepository usuarioRepository;
 
     @GetMapping("/listar/solicitacoes")
     public ResponseEntity<Object> listarTodos() {
@@ -37,10 +48,12 @@ public class SolicitacaoController {
             if (listaSolicitacoes.isEmpty()) {
                 throw new NotFoundException().toSolicitacao();
             }
+            List<SolicitacaoResponseDTO> solicitacaoResponseDTOs = new ArrayList<>();
             for (SolicitacaoModel solicitacao : listaSolicitacoes) {
                 methodsOn(solicitacao);
+                solicitacaoResponseDTOs.add(SolicitacaoMapper.toDTO(solicitacao));
             }
-            response = ResponseEntity.status(200).body(listaSolicitacoes);
+            response = ResponseEntity.status(200).body(solicitacaoResponseDTOs);
         } catch (NotFoundException e) {
             response = ResponseEntity.status(404).body(e.getMensagem());
         } catch (Exception e) {
@@ -50,8 +63,8 @@ public class SolicitacaoController {
         return response;
     }
 
-    @PostMapping("/solicitar/duende/{solicitante}")
-    public ResponseEntity<Object> solicitarDuende(@PathVariable(name = "solicitante") UsuarioModel solicitante, @RequestParam("motivo") String motivo) {
+    @PostMapping("/solicitar/duende")
+    public ResponseEntity<Object> solicitarDuende(@RequestParam("solicitante") String solicitante, @RequestBody @Valid SolicitacaoRequestDTO solicitacaoRequestDTO) {
         ResponseEntity<Object> response;
         try {
             List<SolicitacaoModel> solicitacoes = solicitacaoRepository.findBySolicitanteAndTipo(solicitante, Tipo.DUENDE.getValor());
@@ -59,13 +72,13 @@ public class SolicitacaoController {
                 response = ResponseEntity.status(200).body("A solicitação está em análise.");
             } else {
                 SolicitacaoModel solicitacao = new SolicitacaoModel();
-                solicitacao.setSolicitante(solicitante);
-                solicitacao.setMotivo(motivo);
-                solicitacao.setTipo(Tipo.DUENDE.getValor());
+                solicitacao.setSolicitante(usuarioRepository.findById(solicitante).get());
+                solicitacao.setMotivo(solicitacaoRequestDTO.motivo());
+                solicitacao.setTipo(solicitacaoRequestDTO.tipo());
                 solicitacao.setStatus("PENDENTE");
                 
                 solicitacaoRepository.save(solicitacao);
-                response = ResponseEntity.status(201).body("Solicitação feita com sucesso!");
+                response = ResponseEntity.status(201).body(SolicitacaoMapper.toDTO(solicitacao));
             }
         } catch (Exception e) {
             response = ResponseEntity.status(400).body("Erro ao solicitar modificação para Duende!");
@@ -138,7 +151,7 @@ public class SolicitacaoController {
         solicitacao.add(linkTo(methodOn(SolicitacaoController.class).finalizar(solicitacao.getId())).withRel("finalizar"));
         solicitacao.add(linkTo(methodOn(SolicitacaoController.class).listar(solicitacao.getId())).withRel("listar"));
         solicitacao.add(linkTo(methodOn(SolicitacaoController.class).listarTodos()).withRel("listarTodos"));
-        solicitacao.add(linkTo(methodOn(SolicitacaoController.class).solicitarDuende(solicitacao.getSolicitante(), null)).withRel("solicitarDuende"));
+        solicitacao.add(linkTo(methodOn(SolicitacaoController.class).solicitarDuende(solicitacao.getSolicitante().getId(), null)).withRel("solicitarDuende"));
         solicitacao.add(linkTo(methodOn(SolicitacaoController.class).solicitarFoto(solicitacao.getSolicitante(), null)).withRel("solicitarFoto"));
     }
 }

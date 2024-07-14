@@ -1,4 +1,4 @@
-package com.example.projetoplanta.imagem.Repository;
+package com.example.projetoplanta.Imagem.Repository;
 
 import java.util.List;
 
@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.example.projetoplanta.imagem.Module.ImagemModel;
+import com.example.projetoplanta.Imagem.Module.ImagemModel;
 
 
 @Repository

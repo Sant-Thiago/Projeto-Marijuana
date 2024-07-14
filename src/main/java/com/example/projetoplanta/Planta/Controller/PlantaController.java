@@ -104,6 +104,7 @@ public class PlantaController {
             }
             // PlantaMapper plantaMapper = new PlantaMapper();
             PlantaModel planta = plantaMapper.toUpdateModel(plantaRequestDTO, optionalPlanta.get());
+            planta = plantaRepository.save(planta);
             methodsOn(planta);
             response = ResponseEntity.status(200).body(plantaMapper.toDTO(planta));
         } catch (NotFoundException e) {

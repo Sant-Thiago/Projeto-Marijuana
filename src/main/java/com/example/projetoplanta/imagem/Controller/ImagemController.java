@@ -1,4 +1,4 @@
-package com.example.projetoplanta.imagem.Controller;
+package com.example.projetoplanta.Imagem.Controller;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.projetoplanta.Imagem.DTO.ImagemDTO;
+import com.example.projetoplanta.Imagem.DTO.ImagemRequestDTO;
+import com.example.projetoplanta.Imagem.Mapper.ImagemMapper;
+import com.example.projetoplanta.Imagem.Module.ImagemModel;
+import com.example.projetoplanta.Imagem.Repository.ImagemRepository;
 import com.example.projetoplanta.exceptions.NotFoundException;
-import com.example.projetoplanta.imagem.DTO.ImagemDTO;
-import com.example.projetoplanta.imagem.DTO.ImagemRequestDTO;
-import com.example.projetoplanta.imagem.Mapper.ImagemMapper;
-import com.example.projetoplanta.imagem.Module.ImagemModel;
-import com.example.projetoplanta.imagem.Repository.ImagemRepository;
 
 import jakarta.validation.Valid;
 
@@ -32,12 +32,15 @@ public class ImagemController {
     
     @Autowired
     ImagemRepository imagemRepository;
+    
+    @Autowired
+    ImagemMapper imagemMapper;
 
     @PostMapping("/def/imagem")
     public ResponseEntity<Object> defImagem(@RequestBody @Valid ImagemRequestDTO imagemRequestDTO) {
         ResponseEntity<Object> response;
         try {
-            ImagemModel imagem = ImagemMapper.toModel(imagemRequestDTO);
+            ImagemModel imagem = imagemMapper.toModel(imagemRequestDTO);
             imagem = imagemRepository.save(imagem);
 
             response = ResponseEntity.status(201).body(ImagemMapper.toDTO(imagem));
@@ -57,7 +60,7 @@ public class ImagemController {
             if (optionalImagem.isEmpty()) {
                 throw new NotFoundException().toImagem(id);
             }
-            ImagemModel imagem = ImagemMapper.toModel(imagemRequestDTO);
+            ImagemModel imagem = imagemMapper.toModel(imagemRequestDTO);
             imagem = imagemRepository.save(imagem);
             response = ResponseEntity.status(200).body(ImagemMapper.toDTO(imagem));
         } catch (NotFoundException e) {

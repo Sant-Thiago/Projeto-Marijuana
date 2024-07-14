@@ -32,7 +32,7 @@ import lombok.ToString;
 @Table(name = "planta")
 @EqualsAndHashCode(of="id", callSuper = false)
 public class PlantaModel extends RepresentationModel<PlantaModel> implements Serializable {
-    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 3L;
 
     @Id
     @GeneratedValue(strategy=GenerationType.UUID)

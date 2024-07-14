@@ -61,6 +61,7 @@ public class PlantaMapper {
     public PlantaModel toUpdateModel(PlantaRequestDTO plantaRequestDTO, PlantaModel plantaModel) {
         PlantaModel newPlantaModel = new PlantaModel();
         newPlantaModel.setId(plantaModel.getId());
+        newPlantaModel.setNome(plantaRequestDTO.nome());
         newPlantaModel.setNomePop_1(plantaRequestDTO.nomePop_1());
         newPlantaModel.setNomePop_2(plantaRequestDTO.nomePop_2());
         newPlantaModel.setGenetica(plantaRequestDTO.genetica());
