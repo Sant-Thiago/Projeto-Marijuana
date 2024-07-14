@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import org.springframework.hateoas.RepresentationModel;
 
-import com.example.projetoplanta.Aroma.enums.Tipo;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,7 +32,7 @@ public class EfeitoModel extends RepresentationModel<EfeitoModel> implements Ser
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     
-    private Tipo tipo;
+    private String tipo;
 
     private String nome;
 

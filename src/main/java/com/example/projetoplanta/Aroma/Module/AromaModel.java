@@ -4,11 +4,7 @@ import java.io.Serializable;
 
 import org.springframework.hateoas.RepresentationModel;
 
-import com.example.projetoplanta.Aroma.enums.Tipo;
-
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -35,8 +31,7 @@ public class AromaModel extends RepresentationModel<AromaModel> implements Seria
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     
-    @Enumerated(EnumType.STRING) // Mapeamento do enum para o tipo STRING
-    private Tipo tipo;
+    private String tipo;
 
     private String nome;
 

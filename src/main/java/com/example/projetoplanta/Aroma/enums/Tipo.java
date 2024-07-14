@@ -6,8 +6,8 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum Tipo {
-    AROMA ("AROMA"),
-    TERPENO ( "TERPENO");
+    AROMA ("Aroma"),
+    TERPENO ( "Terpeno");
 
     private String valor;
 }

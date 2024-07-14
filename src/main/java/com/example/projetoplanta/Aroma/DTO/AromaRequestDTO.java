@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Pattern;
 
 public record AromaRequestDTO(
     @NotBlank
-    @Pattern(regexp = "AROMA|TERPENO", message = "O campo tipo deve ser 'AROMA' ou 'TERPENO'") 
+    @Pattern(regexp = "Aroma|Terpeno", message = "O campo tipo deve ser 'Aroma' ou 'Terpeno'") 
     String tipo,
 
     @NotBlank

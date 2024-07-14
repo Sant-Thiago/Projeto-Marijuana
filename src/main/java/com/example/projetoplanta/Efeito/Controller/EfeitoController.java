@@ -3,6 +3,7 @@ package com.example.projetoplanta.Efeito.Controller;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,7 +16,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.projetoplanta.Efeito.DTO.EfeitoDTO;
+import com.example.projetoplanta.Efeito.DTO.EfeitoRequestDTO;
+import com.example.projetoplanta.Efeito.DTO.EfeitoSelectedDTO;
 import com.example.projetoplanta.Efeito.Mapper.EfeitoMapper;
 import com.example.projetoplanta.Efeito.Module.EfeitoModel;
 import com.example.projetoplanta.Efeito.Repository.EfeitoRepository;
@@ -37,10 +39,12 @@ public class EfeitoController {
             if (listaTodosefeitos.isEmpty()) {
                 throw new NotFoundException().toEfeito();
             }
+            List<EfeitoSelectedDTO> efeitosSelectedDTOs = new ArrayList<>();
             for (EfeitoModel efeito : listaTodosefeitos) {
+                efeitosSelectedDTOs.add(EfeitoMapper.toDTO(efeito));
                 methodsOn(efeito);
             }
-            responses = ResponseEntity.status(200).body(listaTodosefeitos);
+            responses = ResponseEntity.status(200).body(efeitosSelectedDTOs);
         } catch (NotFoundException e) {
             responses = ResponseEntity.status(404).body(List.of(e.getMensagem()));
         } catch (Exception e) {
@@ -60,7 +64,7 @@ public class EfeitoController {
             }
             EfeitoModel efeito = optionalefeito.get();
             methodsOn(efeito);
-            response = ResponseEntity.status(200).body(efeito);
+            response = ResponseEntity.status(200).body(EfeitoMapper.toDTO(efeito));
         } catch (NotFoundException e) {
             response = ResponseEntity.status(404).body(e.getMensagem());
         } catch (Exception e) {
@@ -71,28 +75,28 @@ public class EfeitoController {
     }
 
     @PostMapping("/def/efeito")
-    public ResponseEntity<Object> defEfeito(@RequestBody @Valid EfeitoDTO efeitoDTO) {
+    public ResponseEntity<Object> defEfeito(@RequestBody @Valid EfeitoRequestDTO efeitoRequestDTO) {
         ResponseEntity<Object> response;
         try {
-            EfeitoModel efeitoModel = EfeitoMapper.toModel(efeitoDTO);
-            efeitoRepository.save(efeitoModel);
-            response = ResponseEntity.status(201).body("Efeito " + efeitoModel.getId() + ". Criado com sucesso.");
+            EfeitoModel efeito = EfeitoMapper.toModel(efeitoRequestDTO);
+            efeito = efeitoRepository.save(efeito);
+            response = ResponseEntity.status(201).body(EfeitoMapper.toDTO(efeito));
         } catch (Exception e) {
-            response = ResponseEntity.status(400).body("Erro ao definir efeito!");
+            response = ResponseEntity.status(400).body("Erro ao definir efeito!"+e.getMessage());
             // Logger.error RuntimeException("Erro ao definir efeito:: "+ e.getMessage());
         }
         return response;
     }
 
     @PutMapping("/up/efeito/{id}")
-    public ResponseEntity<Object> atualizar(@PathVariable(value = "id") Integer id, @RequestBody @Valid EfeitoDTO efeitoDTO) {
+    public ResponseEntity<Object> atualizar(@PathVariable(value = "id") Integer id, @RequestBody @Valid EfeitoRequestDTO efeitoRequestDTO) {
         ResponseEntity<Object> response;
         try {
             Optional<EfeitoModel> optionalefeito = efeitoRepository.findById(id);
             if (optionalefeito.isEmpty()) {
                 throw new NotFoundException().toEfeito(id);
             }
-            EfeitoModel efeito = EfeitoMapper.toModel(efeitoDTO);
+            EfeitoModel efeito = EfeitoMapper.toModel(efeitoRequestDTO);
             efeito = efeitoRepository.save(efeito);
             response = ResponseEntity.status(200).body("Efeito:: "+efeito.getId()+" atualizado com sucesso!");
         } catch (NotFoundException e) {
