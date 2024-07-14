@@ -22,18 +22,34 @@ CREATE TABLE usuario (
 CREATE TABLE aroma_terpeno (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     tipo VARCHAR(7) NOT NULL,
-		CONSTRAINT chTipoAT CHECK (tipo IN ("AROMA", "TERPENO")),
+		CONSTRAINT chTipoAT CHECK (tipo IN ("Aroma", "Terpeno")),
     nome VARCHAR(42) NOT NULL UNIQUE,
     caracteristica VARCHAR(255) NOT NULL
 );
+## show create table aroma_terpeno;
+
 
 CREATE TABLE efeito (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    tipo CHAR(8),
+    tipo CHAR(9),
 		CONSTRAINT tipoE CHECK (tipo IN ("Benefício", "Malefício")),
     nome VARCHAR(255) NOT NULL,
     causa VARCHAR(255) NOT NULL
 );
+
+DELIMITER // 
+CREATE TRIGGER before_insert_tipoEfeito
+BEFORE INSERT ON efeito
+FOR EACH ROW
+BEGIN
+	IF NEW.tipo = "BENEFICIO" THEN
+		SET NEW.tipo = "Benefício";
+	ELSEIF NEW.tipo = "MALEFICIO" THEN
+		SET NEW.tipo = "Malefício";
+    END IF;
+END //
+DELIMITER ;
+
 
 CREATE TABLE duende (
 	id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -65,6 +81,7 @@ CREATE TABLE planta (
     tempoFloracao INTEGER NOT NULL
 );
 
+
 CREATE TABLE favorito (
     id INT AUTO_INCREMENT PRIMARY KEY,
     fkUsuario VARCHAR(255) NOT NULL,
@@ -88,6 +105,7 @@ END;
 $$
 DELIMITER ;
 
+
 CREATE TABLE comentario (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     mensagem TEXT NOT NULL,
@@ -98,17 +116,18 @@ CREATE TABLE comentario (
     data TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
+
 CREATE TABLE solicitacao (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     solicitante VARCHAR(255) NOT NULL,
 		CONSTRAINT fkSolicitanteSol FOREIGN KEY (solicitante) REFERENCES usuario(id),
     tipo VARCHAR(8) NOT NULL,
-		CONSTRAINT ckTipo CHECK (tipo IN ("FOTO", "DUENDE")),
+		CONSTRAINT ckTipo CHECK (tipo IN ("Foto", "Duende")),
 	motivo VARCHAR(255),
     fotoUsuario VARCHAR(100),
     dtArmazenamento TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     status VARCHAR(12) NOT NULL,
-		CONSTRAINT ckStatusSol CHECK (status IN ("PENDENTE", "FINALIZADO"))
+		CONSTRAINT ckStatusSol CHECK (status IN ("Pendente", "Finalizado"))
 );
 
 DELIMITER $$
